@@ -7,9 +7,9 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 @Mapper
-public interface GradeMapper {
+public interface IGradeMapper {
     // 获取某个学生成绩，接收学生id
-    @Select("SELECT u.id AS studentId, u.name AS studentName, c.courseName, g.grade " +
+    @Select("SELECT DISTINCT u.id AS studentId, u.name AS studentName, c.courseName, g.grade " +
             "FROM users u " +
             "JOIN grade g ON u.id = g.studentId " +
             "JOIN course c ON g.courseId = c.courseId " +
@@ -17,7 +17,7 @@ public interface GradeMapper {
     List<GetGrade> getGradeStu(int studentId);
 
     // 获取所有学生成绩，无参
-    @Select("SELECT u.id AS studentId, u.name AS studentName, c.courseName, g.grade " +
+    @Select("SELECT DISTINCT u.id AS studentId, u.name AS studentName, c.courseName, g.grade " +
             "FROM users u " +
             "JOIN grade g ON u.id = g.studentId " +
             "JOIN course c ON g.courseId = c.courseId ")
