@@ -20,8 +20,7 @@ export const register = (data) => {
 
 // 用户登出
 export const logout = () => {
-  return request({
-    url: '/api/user/logout',
-    method: 'post'
-  })
+  localStorage.removeItem('token')
+  localStorage.removeItem('userRole')
+  // 其他退出逻辑...
 } 

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="com.obiscr.chatgpt.settings.EasyCodeState">
-    <option name="projectFiles" value="$PROJECT_DIR$/src/main/java/com/etc/boot/controller/DeptController.java;D:/桌面/20241226/MavenDemo/src/main/java/com/etc/boot/controller/HelloController.java;D:/桌面/20241226/MavenDemo/src/main/java/com/etc/boot/Dao/IDeptDao.java;D:/桌面/20241226/MavenDemo/src/main/java/com/etc/boot/Pojo/Dept.java;D:/桌面/20241226/MavenDemo/src/main/java/com/etc/boot/Service/DeptService.java;D:/桌面/20241226/MavenDemo/src/main/java/com/etc/boot/Service/IDeptService.java;D:/桌面/20241226/MavenDemo/src/main/java/com/etc/boot/SpringBootApplication.java;D:/桌面/20241226/MavenDemo/src/test/java/org/example/AppTest.java;D:/桌面/20241226/MavenDemo/pom.xml" />
-  </component>
-</project>

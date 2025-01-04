@@ -73,28 +73,17 @@ const handleLogin = async () => {
     console.log('登录响应:', response)
 
     if (response.code === 200 && response.data) {
-      const userData = response.data
-      // 将整个用户信息存储为JSON字符串
-      localStorage.setItem('user', JSON.stringify(userData))
-      
-      // 确认数据已存储
-      console.log('存储的用户信息:', localStorage.getItem('user'))
+      // 保存完整的用户信息
+      localStorage.setItem('user', JSON.stringify(response.data))
+      localStorage.setItem('userRole', response.data.role)
 
-      // 等待数据存储完成后再跳转
-      await nextTick()
-
-      const routes = {
-        admin: '/admin/students',
-        teacher: '/teacher/grades',
-        student: '/student/grades'
-      }
-
-      const targetRoute = routes[userData.role]
-      if (targetRoute) {
-        console.log('准备跳转到:', targetRoute)
-        await router.push(targetRoute)
-      } else {
-        errorMessage.value = '未知的用户角色'
+      // 根据角色跳转
+      if (response.data.role === 'admin') {
+        router.push('/admin')
+      } else if (response.data.role === 'teacher') {
+        router.push('/teacher')
+      } else if (response.data.role === 'student') {
+        router.push('/student')
       }
     } else {
       errorMessage.value = response.message || '登录失败'

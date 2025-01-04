@@ -100,6 +100,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const userInfo = localStorage.getItem('user')
     const user = userInfo ? JSON.parse(userInfo) : null
+    const userRole = localStorage.getItem('userRole')
 
     // 检查是否需要认证
     if (to.matched.some(record => record.meta.requiresAuth)) {
@@ -131,7 +132,21 @@ router.beforeEach((to, from, next) => {
             }
             next(routes[user.role])
         } else {
-            next()
+            // 如果路由需要权限验证
+            if (to.meta.roles) {
+                // 检查用户角色是否在允许的角色列表中
+                if (to.meta.roles.includes(userRole)) {
+                    next() // 允许访问
+                } else {
+                    next('/403') // 重定向到无权限页面
+                    // 或者重定向到对应角色的首页
+                    // if (userRole === 'admin') next('/admin')
+                    // else if (userRole === 'teacher') next('/teacher')
+                    // else if (userRole === 'student') next('/student')
+                }
+            } else {
+                next() // 不需要权限验证的路由直接放行
+            }
         }
     }
 })
