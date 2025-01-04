@@ -11,10 +11,12 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Course {
-    private Integer id;
-    private String courseName;    // 课程名称
-    private String courseCode;    // 课程代码
-    private Integer credit;       // 学分
-    private String teacherId;     // 授课教师ID
-    private String description;   // 课程描述
+    // 课程id
+    private int courseId;
+    // 课程名
+    private String courseName;
+    // 教室
+    private String classroom;
+    // 教师id
+    private int teacherId;
 } 
