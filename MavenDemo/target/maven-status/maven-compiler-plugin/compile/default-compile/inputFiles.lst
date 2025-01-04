@@ -1,0 +1,16 @@
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\controller\UserController.java
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\Pojo\Course.java
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\config\CorsConfig.java
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\Service\UserService.java
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\dto\RegisterDTO.java
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\common\Result.java
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\config\WebConfig.java
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\utils\JwtUtil.java
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\Application.java
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\Pojo\User.java
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\Pojo\Class.java
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\dto\LoginDTO.java
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\mapper\UserMapper.java
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\interceptor\JwtInterceptor.java
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\Service\impl\UserServiceImpl.java
+D:\桌面\20241226\MavenDemo\src\main\java\com\etc\boot\Pojo\Score.java
