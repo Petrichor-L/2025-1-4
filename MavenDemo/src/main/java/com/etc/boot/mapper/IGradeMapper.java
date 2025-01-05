@@ -1,10 +1,7 @@
 package com.etc.boot.mapper;
 
 import com.etc.boot.Pojo.GetGrade;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -32,4 +29,8 @@ public interface IGradeMapper {
     // 更新学生成绩
     @Update("UPDATE `grade`.`grade` SET `grade` = #{grade} WHERE `studentId` = #{studentId} AND `courseId` = #{courseId}")
     int updateGrade(int studentId, int courseId, int grade);
+
+    // 删除学生某个课程的全部成绩
+    @Delete("DELETE FROM `grade`.`grade` WHERE `studentId` = #{studentId} AND `courseId` = #{courseId}")
+    int deleteGrade(int studentId, int courseId);
 }

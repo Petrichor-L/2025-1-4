@@ -20,7 +20,7 @@ public class GradeController {
     }
 
     @RequestMapping("Stu")
-    public List<GetGrade> getGradestu(int studentId) {
+    public List<GetGrade> getGradeStu(int studentId) {
         return iGradeService.getGradeStu(studentId);
     }
 
@@ -32,5 +32,10 @@ public class GradeController {
     @RequestMapping("Update")
     public int updateGrade(int studentId, int courseId, int grade) {
         return iGradeService.updateGrade(studentId, courseId, grade);
+    }
+
+    @RequestMapping("Del")
+    public int deleteGrade(int studentId, int courseId) {
+        return iGradeService.deleteGrade(studentId, courseId);
     }
 }

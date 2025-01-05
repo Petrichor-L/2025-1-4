@@ -5,11 +5,13 @@ import com.etc.boot.Pojo.GetGrade;
 import java.util.List;
 
 public interface IGradeService {
-    public List<GetGrade> getGradeAll();
+    List<GetGrade> getGradeAll();
 
-    public List<GetGrade> getGradeStu(int studentId);
+    List<GetGrade> getGradeStu(int studentId);
 
-    public int addGrade(int studentId, int courseId, int grade);
+    int addGrade(int studentId, int courseId, int grade);
 
-    public int updateGrade(int studentId, int courseId, int grade);
+    int updateGrade(int studentId, int courseId, int grade);
+
+    int deleteGrade(int studentId, int courseId);
 }
