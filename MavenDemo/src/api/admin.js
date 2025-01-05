@@ -9,10 +9,11 @@ export function getUsers() {
 }
 
 // 课程管理
-export function getCourses() {
+export function getCourses(params) {
   return request({
     url: '/api/admin/courses',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 

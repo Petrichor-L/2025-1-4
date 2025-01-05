@@ -31,4 +31,11 @@ public interface CourseMapper {
             "LEFT JOIN users u ON c.teacher_id = u.username " +
             "WHERE c.course_id = #{courseId}")
     Course findByCourseId(@Param("courseId") String courseId);
+    
+    @Select("SELECT c.*, u.name as teacher_name " +
+            "FROM course c " +
+            "LEFT JOIN users u ON c.teacher_id = u.username " +
+            "WHERE c.course_id LIKE CONCAT('%',#{keyword},'%') " +
+            "OR c.course_name LIKE CONCAT('%',#{keyword},'%')")
+    List<Course> searchCourses(@Param("keyword") String keyword);
 } 

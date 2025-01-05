@@ -11,7 +11,7 @@ public interface AdminService {
     
     // 课程管理
     List<Course> getAllCourses();
-    Course addCourse(Course course);
+    boolean addCourse(Course course);
     Course updateCourse(Course course);
     void deleteCourse(Integer id);
     
@@ -25,4 +25,7 @@ public interface AdminService {
     User getUserByUsername(String username);
     Course getCourseById(String courseId);
     User getTeacherByName(String name);
+    
+    // 添加课程搜索方法
+    List<Course> searchCourses(String keyword);
 } 

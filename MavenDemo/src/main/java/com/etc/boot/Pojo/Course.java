@@ -3,7 +3,6 @@ package com.etc.boot.Pojo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import javax.persistence.Transient;
 
 /**
  * 课程实体类
@@ -17,6 +16,6 @@ public class Course {
     private String courseName;   // 对应数据库 course_name
     private String classroom;    // 对应数据库 classroom
     private String teacherId;    // 对应数据库 teacher_id
-    @Transient
+    @javax.persistence.Transient
     private String teacherName;  // 不对应数据库字段
 } 
