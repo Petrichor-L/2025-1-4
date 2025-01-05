@@ -1,7 +1,6 @@
 package com.etc.boot.controller;
 
 import com.etc.boot.Pojo.GetStudent;
-import com.etc.boot.Pojo.User;
 import com.etc.boot.Service.IStudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
