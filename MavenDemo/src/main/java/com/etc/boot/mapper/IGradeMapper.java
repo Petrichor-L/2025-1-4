@@ -36,14 +36,12 @@ public interface IGradeMapper {
                  @Param("courseId") Integer courseId, 
                  @Param("grade") Integer grade);
 
-    @Update("UPDATE grade SET grade = #{grade} " +
-            "WHERE studentId = #{studentId} AND courseId = #{courseId}")
+    @Update("UPDATE grade SET grade = #{grade} WHERE studentId = #{studentId} AND courseId = #{courseId}")
     int updateGrade(@Param("studentId") String studentId, 
                    @Param("courseId") Integer courseId, 
                    @Param("grade") Integer grade);
 
-    @Delete("DELETE FROM grade " +
-            "WHERE studentId = #{studentId} AND courseId = #{courseId}")
+    @Delete("DELETE FROM grade WHERE studentId = #{studentId} AND courseId = #{courseId}")
     int deleteGrade(@Param("studentId") String studentId, 
                    @Param("courseId") Integer courseId);
 

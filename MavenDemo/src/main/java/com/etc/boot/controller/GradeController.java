@@ -102,6 +102,24 @@ public class GradeController {
         }
     }
 
+    @PutMapping
+    public Result updateGrade(@RequestBody Grade grade) {
+        try {
+            int result = gradeService.updateGrade(
+                grade.getStudentId(), 
+                grade.getCourseId(), 
+                grade.getGrade()
+            );
+            if (result > 0) {
+                return Result.success("成绩修改成功");
+            } else {
+                return Result.error("成绩修改失败");
+            }
+        } catch (RuntimeException e) {
+            return Result.error(e.getMessage());
+        }
+    }
+
     // 添加这些方法来获取当前用户信息
     private String getCurrentUserRole() {
         // TODO: 从 Session 或 Token 中获取
