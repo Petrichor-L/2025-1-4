@@ -1,16 +1,14 @@
 package com.etc.boot.controller;
 
-import com.etc.boot.Pojo.Users;
 import com.etc.boot.Service.UserService;
 import com.etc.boot.common.Result;
 import com.etc.boot.dto.LoginDTO;
 import com.etc.boot.dto.RegisterDTO;
+import com.etc.boot.Pojo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-
 
 @RestController
 @RequestMapping("/api/user")
@@ -25,16 +23,15 @@ public class UserController {
      * 用户登录
      */
     @PostMapping("/login")
-    public Result<Users> login(@RequestBody LoginDTO loginDTO) {
+    public Result<User> login(@RequestBody LoginDTO loginDTO) {
         log.info("收到登录请求：{}", loginDTO);
         try {
-            // 参数校验
             if (StringUtils.isEmpty(loginDTO.getUsername()) || 
                 StringUtils.isEmpty(loginDTO.getPassword())) {
                 return Result.error("用户名或密码不能为空");
             }
             
-            Users user = userService.login(loginDTO.getUsername(), loginDTO.getPassword());
+            User user = userService.login(loginDTO.getUsername(), loginDTO.getPassword());
             if (user != null) {
                 return Result.success(user);
             }
@@ -50,7 +47,7 @@ public class UserController {
      * 用户注册
      */
     @PostMapping("/register")
-    public Result<Users> register(@RequestBody RegisterDTO registerDTO) {
+    public Result<User> register(@RequestBody RegisterDTO registerDTO) {
         log.info("接收到的注册数据: {}", registerDTO);
         try {
             // 参数校验
@@ -62,7 +59,7 @@ public class UserController {
                 return Result.error("用户名或密码不能为空");
             }
             
-            Users user = userService.register(registerDTO);
+            User user = userService.register(registerDTO);
             log.info("注册成功，返回用户数据: {}", user);
             return Result.success(user);
             

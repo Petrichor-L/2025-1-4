@@ -41,19 +41,26 @@ export default {
   methods: {
     async handleLogin() {
       try {
-        this.loading = true
-        const res = await login(this.loginForm)
+        this.loading = true;
+        const res = await login(this.loginForm);
         if (res.code === 200) {
-          ElMessage.success('登录成功')
+          ElMessage.success('登录成功');
           // 存储用户信息
-          localStorage.setItem('user', JSON.stringify(res.data))
-          // 跳转到首页
-          this.$router.push('/')
+          localStorage.setItem('user', JSON.stringify(res.data));
+          // 根据用户角色跳转到不同页面
+          if (res.data.role === 'admin') {
+            this.$router.push('/admin/users');
+          } else if (res.data.role === 'student') {
+            this.$router.push('/student');  // 学生首页
+          } else if (res.data.role === 'teacher') {
+            this.$router.push('/teacher');  // 教师首页
+          }
         }
       } catch (error) {
-        console.error('登录失败：', error)
+        console.error('登录失败：', error);
+        ElMessage.error('登录失败，请重试');
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     }
   }
