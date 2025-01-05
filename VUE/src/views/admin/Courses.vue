@@ -3,8 +3,9 @@
     <div class="header">
       <el-input
         v-model="searchKeyword"
-        placeholder="搜索课程名称或编号"
+        placeholder="输入课程编号或名称搜索"
         style="width: 300px"
+        clearable
         @keyup.enter="handleSearch"
       >
         <template #append>
@@ -106,11 +107,13 @@ const rules = {
 const loadCourses = async () => {
   loading.value = true
   try {
-    const res = await getCourses({
-      keyword: searchKeyword.value
-    })
+    const params = {}
+    if (searchKeyword.value) {
+      params.keyword = searchKeyword.value
+    }
+
+    const res = await getCourses(params)
     console.log('课程列表响应:', res)
-    console.log('课程数据:', res.data)
     
     if (res && res.code === 200) {
       courseList.value = res.data || []
@@ -130,7 +133,7 @@ const loadCourses = async () => {
   }
 }
 
-// 搜索
+// 搜索处理
 const handleSearch = () => {
   loadCourses()
 }
@@ -240,5 +243,10 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
+}
+
+.search-area {
+  display: flex;
+  align-items: center;
 }
 </style>   

@@ -28,13 +28,44 @@ public class AdminController {
     
     // 课程管理
     @GetMapping("/courses")
-    public Result<List<Course>> listCourses() {
-        return Result.success(adminService.getAllCourses());
+    public Result<List<Course>> listCourses(@RequestParam(required = false) String keyword) {
+        log.info("查询课程列表，关键字：{}", keyword);
+        try {
+            List<Course> courses;
+            if (StringUtils.hasText(keyword)) {
+                courses = adminService.searchCourses(keyword);
+            } else {
+                courses = adminService.getAllCourses();
+            }
+            return Result.success(courses);
+        } catch (Exception e) {
+            log.error("查询课程列表失败", e);
+            return Result.error("查询课程列表失败：" + e.getMessage());
+        }
     }
     
     @PostMapping("/courses")
     public Result<Course> addCourse(@RequestBody Course course) {
-        return Result.success(adminService.addCourse(course));
+        log.info("添加课程：{}", course);
+        try {
+            // 如果传入了教师姓名，根据姓名查找教师ID
+            if (StringUtils.hasText(course.getTeacherName())) {
+                User teacher = adminService.getTeacherByName(course.getTeacherName());
+                if (teacher == null) {
+                    return Result.error("教师不存在");
+                }
+                course.setTeacherId(teacher.getUsername());
+            }
+            
+            if (adminService.addCourse(course)) {
+                return Result.success(course);
+            } else {
+                return Result.error("添加课程失败");
+            }
+        } catch (Exception e) {
+            log.error("添加课程失败", e);
+            return Result.error("添加课程失败：" + e.getMessage());
+        }
     }
     
     @PutMapping("/courses/{courseId}")

@@ -44,9 +44,8 @@ public class AdminServiceImpl implements AdminService {
     
     @Override
     @Transactional
-    public Course addCourse(Course course) {
-        courseMapper.insert(course);
-        return course;
+    public boolean addCourse(Course course) {
+        return courseMapper.insert(course) > 0;
     }
     
     @Override
@@ -123,5 +122,10 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public User getTeacherByName(String name) {
         return userMapper.findTeacherByName(name);
+    }
+
+    @Override
+    public List<Course> searchCourses(String keyword) {
+        return courseMapper.searchCourses(keyword);
     }
 } 
