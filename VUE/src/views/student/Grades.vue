@@ -1,73 +1,78 @@
 <template>
-  <div class="grades-container">
-    <h2>我的成绩</h2>
-    <div class="grades-table">
-      <table>
-        <thead>
-          <tr>
-            <th>课程名称</th>
-            <th>学分</th>
-            <th>成绩</th>
-            <th>绩点</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="grade in grades" :key="grade.id">
-            <td>{{ grade.courseName }}</td>
-            <td>{{ grade.credit }}</td>
-            <td>{{ grade.score }}</td>
-            <td>{{ grade.gpa }}</td>
-          </tr>
-        </tbody>
-      </table>
+  <div class="grades-view">
+    <div class="header">
+      <el-input
+        v-model="searchKeyword"
+        placeholder="输入课程编号或名称搜索"
+        style="width: 300px"
+        clearable
+        @keyup.enter="handleSearch"
+      >
+        <template #append>
+          <el-button @click="handleSearch">
+            <el-icon><Search /></el-icon>
+          </el-button>
+        </template>
+      </el-input>
     </div>
+    
+    <el-table 
+      :data="gradeList" 
+      border
+      v-loading="loading"
+      empty-text="暂无数据"
+    >
+      <el-table-column prop="courseId" label="课程编号" width="180" />
+      <el-table-column prop="courseName" label="课程名称" width="180" />
+      <el-table-column prop="grade" label="成绩" width="100" />
+    </el-table>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'StudentGrades',
-  data() {
-    return {
-      grades: [
-        { id: 1, courseName: '高等数学', credit: 4, score: 85, gpa: 3.5 },
-        { id: 2, courseName: '大学物理', credit: 3, score: 88, gpa: 3.7 },
-        // 示例数据
-      ]
+<script setup>
+import { ref, onMounted } from 'vue'
+import { Search } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+import { getStudentGrades } from '@/api/student'
+
+const searchKeyword = ref('')
+const gradeList = ref([])
+const loading = ref(false)
+
+// 加载成绩列表
+const loadGrades = async () => {
+  loading.value = true
+  try {
+    const res = await getStudentGrades(searchKeyword.value)
+    if (res && res.code === 200) {
+      gradeList.value = res.data || []
+    } else {
+      ElMessage.error(res?.message || '获取成绩列表失败')
     }
+  } catch (error) {
+    console.error('加载成绩列表错误:', error)
+    ElMessage.error('获取成绩列表失败')
+  } finally {
+    loading.value = false
   }
 }
+
+// 搜索处理
+const handleSearch = () => {
+  loadGrades()
+}
+
+onMounted(() => {
+  loadGrades()
+})
 </script>
 
 <style scoped>
-.grades-container {
+.grades-view {
   padding: 20px;
 }
 
-.grades-table {
-  margin-top: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-
-th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-}
-
-tr:hover {
-  background-color: #f5f5f5;
+.header {
+  margin-bottom: 20px;
 }
 </style> 

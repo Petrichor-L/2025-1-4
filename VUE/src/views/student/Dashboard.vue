@@ -1,106 +1,153 @@
 <template>
   <div class="dashboard-container">
-    <!-- 侧边栏导航 -->
-    <div class="sidebar">
-      <h2>学生系统</h2>
-      <nav>
-        <router-link to="/student/grades">我的成绩</router-link>
-        <router-link to="/student/courses">我的课程</router-link>
-      </nav>
-      <!-- 修改退出登录按钮的处理方式 -->
-      <div class="logout-section">
-        <button class="logout-btn" @click="handleLogout">退出登录</button>
+    <!-- 顶部导航栏 -->
+    <div class="header">
+      <div class="logo">学生成绩管理系统</div>
+      <div class="user-info">
+        <span>{{ userInfo.username }}</span>
+        <el-button link @click="handleLogout">退出登录</el-button>
       </div>
     </div>
-    
-    <!-- 主内容区域 -->
-    <div class="main-content">
-      <!-- 子路由将在这里渲染 -->
-      <router-view></router-view>
+
+    <!-- 主要内容区域 -->
+    <div class="main-container">
+      <!-- 侧边栏 -->
+      <div class="sidebar">
+        <el-menu
+          :default-active="activeMenu"
+          router
+          class="menu"
+          background-color="#e9ecf2"
+        >
+          <el-menu-item index="/student/grades">
+            <el-icon><Document /></el-icon>
+            <span>我的成绩</span>
+          </el-menu-item>
+          <el-menu-item index="/student/courses">
+            <el-icon><Reading /></el-icon>
+            <span>我的课程</span>
+          </el-menu-item>
+        </el-menu>
+      </div>
+
+      <!-- 内容区域 -->
+      <div class="content">
+        <router-view></router-view>
+      </div>
     </div>
   </div>
 </template>
 
-<script>
-import { useRouter } from 'vue-router'
+<script setup>
+import { ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { Document, Reading } from '@element-plus/icons-vue'
+import { ElMessageBox } from 'element-plus'
+import { logout } from '@/api/auth'
 
-export default {
-  name: 'StudentDashboard',
-  setup() {
-    const router = useRouter()
+const router = useRouter()
+const route = useRoute()
+
+// 获取用户信息
+const userInfo = computed(() => {
+  const info = localStorage.getItem('user')
+  return info ? JSON.parse(info) : {}
+})
+
+// 当前激活的菜单项
+const activeMenu = computed(() => route.path)
+
+// 退出登录
+const handleLogout = async () => {
+  try {
+    await ElMessageBox.confirm('确认退出登录吗？', '提示', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
     
-    const handleLogout = () => {
-      // 清除所有本地存储的用户信息
-      localStorage.clear()  // 或者使用 removeItem 逐个清除
-      // localStorage.removeItem('user')
-      // localStorage.removeItem('token')
-      // localStorage.removeItem('userRole')
-      
-      // 跳转到登录页
-      router.push('/login')
-    }
-    
-    return {
-      handleLogout
-    }
+    logout()
+    router.push('/login')
+  } catch (error) {
+    // 用户取消退出
   }
 }
 </script>
 
 <style scoped>
 .dashboard-container {
+  min-height: 100vh;
   display: flex;
-  height: 100vh;
+  flex-direction: column;
+  background-color: #f0f2f5;
+}
+
+.header {
+  height: 60px;
+  background: #6b9ac4;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.main-container {
+  flex: 1;
+  display: flex;
+  margin: 20px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar {
   width: 200px;
-  background-color: #f5f5f5;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  background: #e9ecf2;
+  border-right: 1px solid #e6e6e6;
 }
 
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.menu {
+  border-right: none;
 }
 
-.sidebar a {
-  text-decoration: none;
-  color: #333;
-  padding: 10px;
-}
-
-.sidebar a.router-link-active {
-  background-color: #e0e0e0;
-  border-radius: 4px;
-}
-
-.main-content {
+.content {
   flex: 1;
   padding: 20px;
+  background: white;
 }
 
-.logout-section {
-  margin-top: auto;
-  padding: 20px;
+:deep(.el-menu-item) {
+  color: #606266;
 }
 
-.logout-btn {
-  width: 100%;
-  padding: 10px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+:deep(.el-menu-item:hover) {
+  background-color: #dde2eb !important;
 }
 
-.logout-btn:hover {
-  background-color: #c82333;
+:deep(.el-menu-item.is-active) {
+  background-color: #d0d7e3 !important;
+  color: #6b9ac4 !important;
+  font-weight: 500;
+}
+
+:deep(.el-menu-item .el-icon) {
+  color: #909399;
+}
+
+:deep(.el-menu-item.is-active .el-icon) {
+  color: #6b9ac4 !important;
 }
 </style> 

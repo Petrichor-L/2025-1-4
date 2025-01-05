@@ -100,7 +100,17 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const userInfo = localStorage.getItem('user')
     const user = userInfo ? JSON.parse(userInfo) : null
-    const userRole = localStorage.getItem('userRole')
+
+    // 如果已登录且访问登录页或注册页，重定向到对应角色的首页
+    if (user && (to.path === '/login' || to.path === '/register')) {
+        const routes = {
+            admin: '/admin/students',
+            teacher: '/teacher/grades',
+            student: '/student/grades'
+        }
+        next(routes[user.role])
+        return
+    }
 
     // 检查是否需要认证
     if (to.matched.some(record => record.meta.requiresAuth)) {
@@ -111,43 +121,14 @@ router.beforeEach((to, from, next) => {
             // 检查用户角色是否匹配
             const requiredRole = to.matched.find(record => record.meta.role)?.meta.role
             if (requiredRole && requiredRole !== user.role) {
-                // 角色不匹配，跳转到对应角色的首页
-                const routes = {
-                    admin: '/admin/students',
-                    teacher: '/teacher/grades',
-                    student: '/student/grades'
-                }
-                next(routes[user.role])
+                // 角色不匹配，跳转到403页面
+                next('/403')
             } else {
                 next()
             }
         }
     } else {
-        // 如果已登录且访问登录页或注册页，重定向到对应角色的首页
-        if (user && (to.path === '/login' || to.path === '/register')) {
-            const routes = {
-                admin: '/admin/students',
-                teacher: '/teacher/grades',
-                student: '/student/grades'
-            }
-            next(routes[user.role])
-        } else {
-            // 如果路由需要权限验证
-            if (to.meta.roles) {
-                // 检查用户角色是否在允许的角色列表中
-                if (to.meta.roles.includes(userRole)) {
-                    next() // 允许访问
-                } else {
-                    next('/403') // 重定向到无权限页面
-                    // 或者重定向到对应角色的首页
-                    // if (userRole === 'admin') next('/admin')
-                    // else if (userRole === 'teacher') next('/teacher')
-                    // else if (userRole === 'student') next('/student')
-                }
-            } else {
-                next() // 不需要权限验证的路由直接放行
-            }
-        }
+        next()
     }
 })
 

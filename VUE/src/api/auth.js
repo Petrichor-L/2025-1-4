@@ -20,7 +20,8 @@ export const register = (data) => {
 
 // 用户登出
 export const logout = () => {
-  localStorage.removeItem('token')
+  // 清除所有用户相关信息
+  localStorage.removeItem('user')
   localStorage.removeItem('userRole')
-  // 其他退出逻辑...
+  localStorage.removeItem('token')
 } 

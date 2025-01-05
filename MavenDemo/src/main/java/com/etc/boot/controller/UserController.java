@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/user")
@@ -23,10 +24,12 @@ public class UserController {
      * 用户登录
      */
     @PostMapping("/login")
-    public Result<User> login(@RequestBody User user) {
+    public Result<User> login(@RequestBody User user, HttpSession session) {
         log.info("用户登录：{}", user.getUsername());
         User dbUser = userService.login(user.getUsername(), user.getPassword());
         if (dbUser != null) {
+            // 登录成功，将用户信息存入 session
+            session.setAttribute("user", dbUser);
             return Result.success(dbUser);
         }
         return Result.error("用户名或密码错误");

@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
+import router from '@/router'
 
 // 创建 axios 实例
 const request = axios.create({
@@ -33,8 +35,17 @@ request.interceptors.response.use(
   error => {
     console.error('Response Error:', error)
     if (error.response) {
-      const { status, data } = error.response
-      console.error(`Status: ${status}`, data)
+      const { status } = error.response
+      if (status === 401) {
+        // 未登录或 token 失效
+        ElMessage.error('登录状态已失效，请重新登录')
+        localStorage.clear()  // 清除所有存储的数据
+        router.push('/login')
+      } else if (status === 403) {
+        // 无权限访问
+        ElMessage.error('无权限访问')
+        router.push('/403')
+      }
     }
     return Promise.reject(error)
   }

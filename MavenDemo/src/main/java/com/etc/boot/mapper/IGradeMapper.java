@@ -72,4 +72,15 @@ public interface IGradeMapper {
             "OR c.course_id LIKE CONCAT('%',#{keyword},'%') " +
             "OR c.course_name LIKE CONCAT('%',#{keyword},'%'))")
     List<GetGrade> searchGrades(@Param("keyword") String keyword);
+
+    @Select("SELECT g.studentId as studentId, g.courseId as courseId, g.grade, " +
+            "COALESCE(u.name, u.username) as studentName, c.course_name as courseName " +
+            "FROM grade g " +
+            "LEFT JOIN users u ON g.studentId = u.username " +
+            "LEFT JOIN course c ON g.courseId = c.course_id " +
+            "WHERE g.studentId = #{studentId} " +
+            "AND (c.course_name LIKE CONCAT('%',#{keyword},'%') " +
+            "OR c.course_id LIKE CONCAT('%',#{keyword},'%'))")
+    List<GetGrade> searchStudentGrades(@Param("studentId") String studentId, 
+                                      @Param("keyword") String keyword);
 }
