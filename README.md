@@ -1,3 +1,6 @@
+# 学生成绩管理系统
+主要使用 Vue3 + SpringBoot 实现
+
 # 如何运行：
 1. 在 2025-1-4\MavenDemo\src\main\resources\application.properties文件中修改下面三行，使java程序能够连接本地数据库（记得把书名号《》也删掉）
   - spring.datasource.url=jdbc:mysql://localhost:3306/《数据库的名字》?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
