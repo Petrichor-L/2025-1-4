@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Grade {
-    private Integer studentId;
+    private String studentId;
     private Integer courseId;
     private Integer grade;
 }

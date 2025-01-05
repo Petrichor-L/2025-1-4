@@ -41,7 +41,7 @@ public class GradeController {
                     break;
                 case "student":
                     // 学生只能查看自己的成绩
-                    grades = gradeService.getGradeStu(Integer.parseInt(userId));
+                    grades = gradeService.getGradeStu(userId);
                     break;
                 default:
                     return Result.error("无权限访问");
@@ -73,8 +73,12 @@ public class GradeController {
                 }
             }
             
-            int result = gradeService.addGrade(grade.getStudentId(), grade.getCourseId(), grade.getGrade());
-            return Result.success(result);
+            // 添加成绩
+            boolean success = gradeService.addGrade(grade.getStudentId(), 
+                                                  grade.getCourseId(), 
+                                                  grade.getGrade());
+            
+            return success ? Result.success(1) : Result.error("添加成绩失败");
         } catch (Exception e) {
             log.error("保存成绩失败", e);
             return Result.error("保存成绩失败：" + e.getMessage());
@@ -83,7 +87,7 @@ public class GradeController {
 
     // 删除成绩（仅管理员可用）
     @DeleteMapping("/{studentId}/{courseId}")
-    public Result<Integer> deleteGrade(@PathVariable int studentId, @PathVariable int courseId) {
+    public Result<Integer> deleteGrade(@PathVariable String studentId, @PathVariable Integer courseId) {
         try {
             String role = getCurrentUserRole();
             if (!"admin".equals(role)) {

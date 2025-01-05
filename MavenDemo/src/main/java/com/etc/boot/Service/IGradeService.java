@@ -7,15 +7,15 @@ import java.util.List;
 public interface IGradeService {
     List<GetGrade> getGradeAll();
 
-    List<GetGrade> getGradeStu(int studentId);
+    List<GetGrade> getGradeStu(String studentId);
 
     List<GetGrade> getGradesByTeacher(String teacherId);
 
-    int addGrade(int studentId, int courseId, int grade);
+    boolean addGrade(String studentId, Integer courseId, Integer grade);
 
-    int updateGrade(int studentId, int courseId, int grade);
+    int updateGrade(String studentId, Integer courseId, Integer grade);
 
-    int deleteGrade(int studentId, int courseId);
+    int deleteGrade(String studentId, Integer courseId);
 
     boolean validateTeacherCourse(String teacherId, int courseId);
 }

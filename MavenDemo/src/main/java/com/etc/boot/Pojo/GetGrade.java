@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetGrade {
-    private Integer studentId;    // 学生ID
-    private Integer courseId;     // 课程ID
-    private Integer grade;        // 成绩
-    private String studentName;   // 学生姓名（关联users表）
-    private String courseName;    // 课程名称（关联course表）
+    private String studentId;    // 改为 String
+    private Integer courseId;
+    private Integer grade;
+    private String studentName;
+    private String courseName;
 }

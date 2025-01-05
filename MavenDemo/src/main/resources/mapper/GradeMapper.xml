@@ -1,0 +1,3 @@
+<select id="checkStudentExists" resultType="int">
+    SELECT COUNT(*) FROM users WHERE username = #{studentId} AND role = 'student'
+</select> 
