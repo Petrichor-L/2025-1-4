@@ -8,26 +8,27 @@ import java.util.List;
 @Mapper
 public interface IGradeMapper {
     @Select("SELECT g.studentId as studentId, g.courseId as courseId, g.grade, " +
-            "u.name as studentName, c.course_name as courseName " +
+            "COALESCE(u.name, u.username) as studentName, c.course_name as courseName " +
             "FROM grade g " +
             "LEFT JOIN users u ON g.studentId = u.username " +
-            "LEFT JOIN course c ON g.courseId = c.course_id")
+            "LEFT JOIN course c ON g.courseId = c.course_id " +
+            "WHERE u.role = 'student'")
     List<GetGrade> getGradeAll();
 
     @Select("SELECT g.studentId as studentId, g.courseId as courseId, g.grade, " +
-            "u.name as studentName, c.course_name as courseName " +
+            "COALESCE(u.name, u.username) as studentName, c.course_name as courseName " +
             "FROM grade g " +
             "LEFT JOIN users u ON g.studentId = u.username " +
             "LEFT JOIN course c ON g.courseId = c.course_id " +
-            "WHERE g.studentId = #{studentId}")
+            "WHERE g.studentId = #{studentId} AND u.role = 'student'")
     List<GetGrade> getGradeStu(String studentId);
 
     @Select("SELECT g.studentId as studentId, g.courseId as courseId, g.grade, " +
-            "u.name as studentName, c.course_name as courseName " +
+            "COALESCE(u.name, u.username) as studentName, c.course_name as courseName " +
             "FROM grade g " +
             "LEFT JOIN users u ON g.studentId = u.username " +
             "LEFT JOIN course c ON g.courseId = c.course_id " +
-            "WHERE c.teacher_id = #{teacherId}")
+            "WHERE c.teacher_id = #{teacherId} AND u.role = 'student'")
     List<GetGrade> getGradesByTeacher(@Param("teacherId") String teacherId);
 
     @Insert("INSERT INTO grade (studentId, courseId, grade) " +
@@ -58,4 +59,17 @@ public interface IGradeMapper {
 
     @Select("SELECT COUNT(*) FROM grade WHERE studentId = #{studentId} AND courseId = #{courseId}")
     int checkGradeExists(@Param("studentId") String studentId, @Param("courseId") Integer courseId);
+
+
+    //搜索成绩，模糊查询，可以匹配学生姓名、课程id
+    @Select("SELECT g.studentId as studentId, g.courseId as courseId, g.grade, " +
+            "COALESCE(u.name, u.username) as studentName, c.course_name as courseName " +
+            "FROM grade g " +
+            "LEFT JOIN users u ON g.studentId = u.username " +
+            "LEFT JOIN course c ON g.courseId = c.course_id " +
+            "WHERE u.role = 'student' " +
+            "AND (g.studentId LIKE CONCAT('%',#{keyword},'%') " +
+            "OR c.course_id LIKE CONCAT('%',#{keyword},'%') " +
+            "OR c.course_name LIKE CONCAT('%',#{keyword},'%'))")
+    List<GetGrade> searchGrades(@Param("keyword") String keyword);
 }

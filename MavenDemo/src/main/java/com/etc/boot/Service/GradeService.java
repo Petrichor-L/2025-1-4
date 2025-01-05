@@ -78,4 +78,12 @@ public class GradeService implements IGradeService {
     public boolean validateTeacherCourse(String teacherId, int courseId) {
         return gradeMapper.validateTeacherCourse(teacherId, courseId) > 0;
     }
+
+    @Override
+    public List<GetGrade> searchGrades(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getGradeAll();
+        }
+        return gradeMapper.searchGrades(keyword.trim());
+    }
 }

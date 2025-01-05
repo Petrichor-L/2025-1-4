@@ -5,6 +5,7 @@
         v-model="searchKeyword"
         placeholder="搜索学生姓名或学号"
         style="width: 300px"
+        clearable
         @keyup.enter="handleSearch"
       >
         <template #append>
@@ -26,7 +27,11 @@
       empty-text="暂无数据"
     >
       <el-table-column prop="username" label="学号" width="180" />
-      <el-table-column prop="name" label="姓名" width="180" />
+      <el-table-column prop="name" label="姓名" width="120">
+        <template #default="scope">
+          {{ scope.row.name || '未设置' }}
+        </template>
+      </el-table-column>
       <el-table-column prop="phone" label="联系方式" />
       <el-table-column label="操作" width="180">
         <template #default="scope">
@@ -49,10 +54,10 @@
         label-width="80px"
       >
         <el-form-item label="学号" prop="username">
-          <el-input v-model="studentForm.username" />
+          <el-input v-model="studentForm.username" :disabled="isEdit" />
         </el-form-item>
         <el-form-item label="姓名" prop="name">
-          <el-input v-model="studentForm.name" />
+          <el-input v-model="studentForm.name" placeholder="请输入学生姓名" />
         </el-form-item>
         <el-form-item label="密码" prop="password" v-if="!isEdit">
           <el-input v-model="studentForm.password" type="password" />

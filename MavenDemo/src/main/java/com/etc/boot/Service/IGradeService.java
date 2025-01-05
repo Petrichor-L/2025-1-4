@@ -18,4 +18,6 @@ public interface IGradeService {
     int deleteGrade(String studentId, Integer courseId);
 
     boolean validateTeacherCourse(String teacherId, int courseId);
+
+    List<GetGrade> searchGrades(String keyword);
 }

@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -21,30 +22,38 @@ public class GradeController {
 
     // 获取成绩列表（管理员可查看所有，教师只能查看自己课程的，学生只能查看自己的）
     @GetMapping
-    public Result<List<GetGrade>> getGrades(@RequestParam(required = false) String studentId,
-                                          @RequestParam(required = false) String courseId,
-                                          @RequestParam(required = false) String teacherId) {
+    public Result<List<GetGrade>> getGrades(@RequestParam(required = false) String keyword) {
         try {
-            // 从token或session中获取当前用户角色和ID
             String role = getCurrentUserRole();
             String userId = getCurrentUserId();
             
             List<GetGrade> grades;
-            switch (role) {
-                case "admin":
-                    // 管理员可以查看所有成绩
-                    grades = gradeService.getGradeAll();
-                    break;
-                case "teacher":
-                    // 教师只能查看自己课程的成绩
+            if (StringUtils.hasText(keyword)) {
+                // 如果有搜索关键字，则进行搜索
+                if ("admin".equals(role)) {
+                    grades = gradeService.searchGrades(keyword);
+                } else if ("teacher".equals(role)) {
                     grades = gradeService.getGradesByTeacher(userId);
-                    break;
-                case "student":
-                    // 学生只能查看自己的成绩
+                } else if ("student".equals(role)) {
                     grades = gradeService.getGradeStu(userId);
-                    break;
-                default:
+                } else {
                     return Result.error("无权限访问");
+                }
+            } else {
+                // 没有搜索关键字，返回所有记录
+                switch (role) {
+                    case "admin":
+                        grades = gradeService.getGradeAll();
+                        break;
+                    case "teacher":
+                        grades = gradeService.getGradesByTeacher(userId);
+                        break;
+                    case "student":
+                        grades = gradeService.getGradeStu(userId);
+                        break;
+                    default:
+                        return Result.error("无权限访问");
+                }
             }
             return Result.success(grades);
         } catch (Exception e) {
@@ -89,13 +98,18 @@ public class GradeController {
     @DeleteMapping("/{studentId}/{courseId}")
     public Result<Integer> deleteGrade(@PathVariable String studentId, @PathVariable Integer courseId) {
         try {
+            // 从token或session中获取当前用户角色
             String role = getCurrentUserRole();
             if (!"admin".equals(role)) {
                 return Result.error("仅管理员可删除成绩");
             }
             
             int result = gradeService.deleteGrade(studentId, courseId);
-            return Result.success(result);
+            if (result > 0) {
+                return Result.success(result);
+            } else {
+                return Result.error("删除成绩失败");
+            }
         } catch (Exception e) {
             log.error("删除成绩失败", e);
             return Result.error("删除成绩失败：" + e.getMessage());

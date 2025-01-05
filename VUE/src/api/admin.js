@@ -69,4 +69,43 @@ export function deleteCourse(courseId) {
     url: `/api/admin/courses/${courseId}`,
     method: 'delete'
   })
+}
+
+// 成绩管理相关 API
+export function getGrades() {
+  return request({
+    url: '/api/grades',
+    method: 'get'
+  })
+}
+
+export function addGrade(data) {
+  return request({
+    url: '/api/grades',
+    method: 'post',
+    data
+  })
+}
+
+export function updateGrade(data) {
+  return request({
+    url: '/api/grades',
+    method: 'put',
+    data
+  })
+}
+
+export function deleteGrade(studentId, courseId) {
+  return request({
+    url: `/api/grades/${studentId}/${courseId}`,
+    method: 'delete'
+  })
+}
+
+export function searchGrades(keyword) {
+  return request({
+    url: '/api/grades',
+    method: 'get',
+    params: { keyword }  // 可以搜索学号、课程编号、课程名称
+  })
 } 
