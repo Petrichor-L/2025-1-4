@@ -7,30 +7,48 @@ import java.util.List;
 
 @Mapper
 public interface IGradeMapper {
-    // 获取某个学生成绩，接收学生id
-    @Select("SELECT DISTINCT u.id AS studentId, u.name AS studentName, c.courseName, g.grade " +
-            "FROM users u " +
-            "JOIN grade g ON u.id = g.studentId " +
-            "JOIN course c ON g.courseId = c.courseId " +
-            "WHERE u.id = #{studentId}")
-    List<GetGrade> getGradeStu(int studentId);
-
-    // 获取所有学生成绩，无参
-    @Select("SELECT DISTINCT u.id AS studentId, u.name AS studentName, c.courseName, g.grade " +
-            "FROM users u " +
-            "JOIN grade g ON u.id = g.studentId " +
-            "JOIN course c ON g.courseId = c.courseId ")
+    @Select("SELECT g.studentId as studentId, g.courseId as courseId, g.grade, " +
+            "u.name as studentName, c.course_name as courseName " +
+            "FROM grade g " +
+            "LEFT JOIN users u ON g.studentId = u.user_id " +
+            "LEFT JOIN course c ON g.courseId = c.course_id")
     List<GetGrade> getGradeAll();
 
-    // 添加学生成绩
-    @Insert("INSERT INTO `grade`.`grade` (`studentId`, `courseId`, `grade`) VALUES (#{studentId}, #{courseId}, #{grade})")
-    int addGrade(int studentId, int courseId, int grade);
+    @Select("SELECT g.studentId as studentId, g.courseId as courseId, g.grade, " +
+            "u.name as studentName, c.course_name as courseName " +
+            "FROM grade g " +
+            "LEFT JOIN users u ON g.studentId = u.user_id " +
+            "LEFT JOIN course c ON g.courseId = c.course_id " +
+            "WHERE g.studentId = #{studentId}")
+    List<GetGrade> getGradeStu(int studentId);
 
-    // 更新学生成绩
-    @Update("UPDATE `grade`.`grade` SET `grade` = #{grade} WHERE `studentId` = #{studentId} AND `courseId` = #{courseId}")
-    int updateGrade(int studentId, int courseId, int grade);
+    @Select("SELECT g.studentId as studentId, g.courseId as courseId, g.grade, " +
+            "u.name as studentName, c.course_name as courseName " +
+            "FROM grade g " +
+            "LEFT JOIN users u ON g.studentId = u.user_id " +
+            "LEFT JOIN course c ON g.courseId = c.course_id " +
+            "WHERE c.teacher_id = #{teacherId}")
+    List<GetGrade> getGradesByTeacher(@Param("teacherId") String teacherId);
 
-    // 删除学生某个课程的全部成绩
-    @Delete("DELETE FROM `grade`.`grade` WHERE `studentId` = #{studentId} AND `courseId` = #{courseId}")
-    int deleteGrade(int studentId, int courseId);
+    @Insert("INSERT INTO grade (studentId, courseId, grade) " +
+            "VALUES (#{studentId}, #{courseId}, #{grade})")
+    int addGrade(@Param("studentId") int studentId, 
+                 @Param("courseId") int courseId, 
+                 @Param("grade") int grade);
+
+    @Update("UPDATE grade SET grade = #{grade} " +
+            "WHERE studentId = #{studentId} AND courseId = #{courseId}")
+    int updateGrade(@Param("studentId") int studentId, 
+                   @Param("courseId") int courseId, 
+                   @Param("grade") int grade);
+
+    @Delete("DELETE FROM grade " +
+            "WHERE studentId = #{studentId} AND courseId = #{courseId}")
+    int deleteGrade(@Param("studentId") int studentId, 
+                   @Param("courseId") int courseId);
+
+    @Select("SELECT COUNT(*) FROM course " +
+            "WHERE course_id = #{courseId} AND teacher_id = #{teacherId}")
+    int validateTeacherCourse(@Param("teacherId") String teacherId, 
+                             @Param("courseId") int courseId);
 }
