@@ -73,17 +73,24 @@ const handleLogin = async () => {
     console.log('登录响应:', response)
 
     if (response.code === 200 && response.data) {
+      // 验证选择的角色是否与实际角色匹配
+      if (loginForm.value.role !== response.data.role) {
+        errorMessage.value = '选择的用户类型与账号不匹配'
+        loading.value = false
+        return
+      }
+
       // 保存完整的用户信息
       localStorage.setItem('user', JSON.stringify(response.data))
       localStorage.setItem('userRole', response.data.role)
 
       // 根据角色跳转
       if (response.data.role === 'admin') {
-        router.push('/admin')
+        router.push('/admin/students')
       } else if (response.data.role === 'teacher') {
-        router.push('/teacher')
+        router.push('/teacher/grades')
       } else if (response.data.role === 'student') {
-        router.push('/student')
+        router.push('/student/grades')
       }
     } else {
       errorMessage.value = response.message || '登录失败'

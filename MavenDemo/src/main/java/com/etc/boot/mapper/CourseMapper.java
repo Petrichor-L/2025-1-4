@@ -8,26 +8,27 @@ import java.util.List;
 @Mapper
 public interface CourseMapper {
     
-    @Select("SELECT c.*, u.name as teacher_name FROM courses c " +
-            "LEFT JOIN users u ON c.teacher_id = u.username " +
-            "WHERE u.role = 'teacher'")
+    @Select("SELECT c.*, u.name as teacher_name " +
+            "FROM course c " +
+            "LEFT JOIN users u ON c.teacher_id = u.username")
     List<Course> findAll();
     
-    @Select("SELECT c.*, u.name as teacher_name FROM courses c " +
-            "LEFT JOIN users u ON c.teacher_id = u.username " +
-            "WHERE c.id = #{id} AND u.role = 'teacher'")
-    Course findById(@Param("id") Integer id);
-    
-    @Insert("INSERT INTO courses (course_id, course_name, classroom, teacher_id) " +
+    @Insert("INSERT INTO course (course_id, course_name, classroom, teacher_id) " +
             "VALUES (#{courseId}, #{courseName}, #{classroom}, #{teacherId})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Course course);
     
-    @Update("UPDATE courses SET course_id=#{courseId}, course_name=#{courseName}, " +
+    @Update("UPDATE course SET course_name=#{courseName}, " +
             "classroom=#{classroom}, teacher_id=#{teacherId} " +
-            "WHERE id=#{id}")
+            "WHERE course_id=#{courseId}")
     int update(Course course);
     
-    @Delete("DELETE FROM courses WHERE id = #{id}")
-    int deleteById(@Param("id") Integer id);
+    @Delete("DELETE FROM course WHERE course_id=#{courseId}")
+    int deleteById(@Param("courseId") String courseId);
+    
+    @Select("SELECT c.*, u.name as teacher_name " +
+            "FROM course c " +
+            "LEFT JOIN users u ON c.teacher_id = u.username " +
+            "WHERE c.course_id = #{courseId}")
+    Course findByCourseId(@Param("courseId") String courseId);
 } 

@@ -74,7 +74,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import { getStudents, deleteUser, addStudent, updateUser } from '@/api/admin'
+import { getStudents, deleteUser, addUser, updateUser } from '@/api/admin'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const searchKeyword = ref('')
@@ -205,7 +205,7 @@ const handleSubmit = async () => {
         phone: studentForm.value.phone,
         role: 'student'
       }
-      res = await addStudent(data)
+      res = await addUser(data)
     }
 
     if (res.code === 200) {

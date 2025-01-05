@@ -37,15 +37,37 @@ public class AdminController {
         return Result.success(adminService.addCourse(course));
     }
     
-    @PutMapping("/courses/{id}")
-    public Result<Course> updateCourse(@PathVariable Integer id, @RequestBody Course course) {
-        course.setId(id);
-        return Result.success(adminService.updateCourse(course));
+    @PutMapping("/courses/{courseId}")
+    public Result<Course> updateCourse(@PathVariable String courseId, @RequestBody Course course) {
+        log.info("更新课程信息：{}", course);
+        try {
+            course.setCourseId(courseId);
+            
+            // 如果传入了教师姓名，根据姓名查找教师ID
+            if (StringUtils.hasText(course.getTeacherName())) {
+                User teacher = adminService.getTeacherByName(course.getTeacherName());
+                if (teacher == null) {
+                    return Result.error("教师不存在");
+                }
+                course.setTeacherId(teacher.getUsername());
+            } else {
+                // 如果没有传入教师姓名，保持原有教师不变
+                Course existingCourse = adminService.getCourseById(courseId);
+                if (existingCourse != null) {
+                    course.setTeacherId(existingCourse.getTeacherId());
+                }
+            }
+            
+            return Result.success(adminService.updateCourse(course));
+        } catch (Exception e) {
+            log.error("更新课程失败", e);
+            return Result.error("更新课程失败：" + e.getMessage());
+        }
     }
     
-    @DeleteMapping("/courses/{id}")
-    public Result<Void> deleteCourse(@PathVariable Integer id) {
-        adminService.deleteCourse(id);
+    @DeleteMapping("/courses/{courseId}")
+    public Result<Void> deleteCourse(@PathVariable String courseId) {
+        adminService.deleteCourse(Integer.valueOf(courseId));
         return Result.success(null);
     }
     
@@ -76,7 +98,7 @@ public class AdminController {
             }
             
             // 如果没有设置密码，使用默认密码
-            if (StringUtils.isEmpty(user.getPassword())) {
+            if (!StringUtils.hasText(user.getPassword())) {
                 user.setPassword("123456"); // 默认密码
                 log.info("用户未设置密码，使用默认密码");
             }

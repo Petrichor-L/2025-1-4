@@ -8,12 +8,15 @@ import com.etc.boot.Service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @Service
 public class AdminServiceImpl implements AdminService {
+    
+    private static final Logger log = LoggerFactory.getLogger(AdminServiceImpl.class);
     
     @Autowired
     private UserMapper userMapper;
@@ -34,7 +37,9 @@ public class AdminServiceImpl implements AdminService {
     
     @Override
     public List<Course> getAllCourses() {
-        return courseMapper.findAll();
+        List<Course> courses = courseMapper.findAll();
+        log.debug("查询到的课程数量: {}", courses.size());
+        return courses;
     }
     
     @Override
@@ -47,6 +52,10 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public Course updateCourse(Course course) {
+        // 确保课程存在
+        if (course.getCourseId() == null) {
+            throw new RuntimeException("课程编号不能为空");
+        }
         courseMapper.update(course);
         return course;
     }
@@ -54,7 +63,8 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public void deleteCourse(Integer id) {
-        courseMapper.deleteById(id);
+        // 这里也需要修改
+        courseMapper.deleteById(id.toString());
     }
     
     @Override
@@ -103,5 +113,15 @@ public class AdminServiceImpl implements AdminService {
     public User getUserByUsername(String username) {
         // 通过用户名查询用户
         return userMapper.selectByUsername(username);
+    }
+
+    @Override
+    public Course getCourseById(String courseId) {
+        return courseMapper.findByCourseId(courseId);
+    }
+
+    @Override
+    public User getTeacherByName(String name) {
+        return userMapper.findTeacherByName(name);
     }
 } 

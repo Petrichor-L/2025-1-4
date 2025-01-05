@@ -23,4 +23,6 @@ public interface AdminService {
     User updateUser(User user);
     void deleteUserByUsername(String username);
     User getUserByUsername(String username);
+    Course getCourseById(String courseId);
+    User getTeacherByName(String name);
 } 

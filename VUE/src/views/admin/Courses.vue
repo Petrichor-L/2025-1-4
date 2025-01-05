@@ -1,262 +1,244 @@
 <template>
-  <div class="courses-manage">
-    <!-- 搜索和添加区域 -->
-    <div class="action-bar">
-      <div class="search-box">
-        <input 
-          type="text" 
-          v-model="searchQuery" 
-          placeholder="搜索课程名称或编号"
-        >
-        <button class="search-btn">
-          <i class="fas fa-search"></i>
-        </button>
-      </div>
-      <button class="add-btn" @click="showAddDialog = true">
-        <i class="fas fa-plus"></i> 添加课程
-      </button>
+  <div class="course-manage">
+    <div class="header">
+      <el-input
+        v-model="searchKeyword"
+        placeholder="搜索课程名称或编号"
+        style="width: 300px"
+        @keyup.enter="handleSearch"
+      >
+        <template #append>
+          <el-button @click="handleSearch">
+            <el-icon><Search /></el-icon>
+          </el-button>
+        </template>
+      </el-input>
+      
+      <el-button type="primary" @click="handleAdd">
+        添加课程
+      </el-button>
     </div>
+    
+    <el-table 
+      :data="courseList" 
+      border
+      v-loading="loading"
+      empty-text="暂无数据"
+    >
+      <el-table-column prop="courseId" label="课程编号" width="180" />
+      <el-table-column prop="courseName" label="课程名称" width="180" />
+      <el-table-column prop="teacherName" label="任课教师" />
+      <el-table-column label="操作" width="180">
+        <template #default="scope">
+          <el-button type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
+          <el-button type="danger" link @click="handleDelete(scope.row)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
 
-    <!-- 课程列表 -->
-    <div class="table-container">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>课程编号</th>
-            <th>课程名称</th>
-            <th>授课教师</th>
-            <th>学分</th>
-            <th>课程类型</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="course in courses" :key="course.id">
-            <td>{{ course.courseId }}</td>
-            <td>{{ course.name }}</td>
-            <td>{{ course.teacher }}</td>
-            <td>{{ course.credits }}</td>
-            <td>{{ course.type }}</td>
-            <td class="actions">
-              <button class="edit-btn" @click="handleEdit(course)">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button class="delete-btn" @click="handleDelete(course.id)">
-                <i class="fas fa-trash"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- 分页 -->
-    <div class="pagination">
-      <button :disabled="currentPage === 1" @click="currentPage--">上一页</button>
-      <span>{{ currentPage }} / {{ totalPages }}</span>
-      <button :disabled="currentPage === totalPages" @click="currentPage++">下一页</button>
-    </div>
+    <!-- 添加/编辑课程对话框 -->
+    <el-dialog
+      :title="dialogTitle"
+      v-model="dialogVisible"
+      width="500px"
+    >
+      <el-form 
+        :model="courseForm" 
+        :rules="rules"
+        ref="formRef"
+        label-width="80px"
+      >
+        <el-form-item label="课程编号" prop="courseId">
+          <el-input v-model="courseForm.courseId" />
+        </el-form-item>
+        <el-form-item label="课程名称" prop="courseName">
+          <el-input v-model="courseForm.courseName" />
+        </el-form-item>
+        <el-form-item label="任课教师" prop="teacherName">
+          <el-input v-model="courseForm.teacherName" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleSubmit" :loading="submitting">
+          确定
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from 'vue'
+import { Search } from '@element-plus/icons-vue'
+import { getCourses, addCourse, updateCourse, deleteCourse } from '@/api/admin'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
-export default {
-  name: 'CoursesManage',
-  setup() {
-    const searchQuery = ref('')
-    const currentPage = ref(1)
-    const totalPages = ref(1)
-    const courses = ref([])
-    const showAddDialog = ref(false)
+const searchKeyword = ref('')
+const courseList = ref([])
+const loading = ref(false)
+const dialogVisible = ref(false)
+const dialogTitle = ref('')
+const submitting = ref(false)
+const formRef = ref(null)
+const isEdit = ref(false)
 
-    // 获取课程列表
-    const fetchCourses = async () => {
-      try {
-        // 这里调用API获取课程数据
-        // const response = await getCourses(currentPage.value, searchQuery.value)
-        // courses.value = response.data
-        // totalPages.value = response.totalPages
-      } catch (error) {
-        console.error('获取课程列表失败:', error)
-      }
+const courseForm = ref({
+  courseId: '',
+  courseName: '',
+  teacherName: ''
+})
+
+// 表单验证规则
+const rules = {
+  courseId: [
+    { required: true, message: '请输入课程编号', trigger: 'blur' }
+  ],
+  courseName: [
+    { required: true, message: '请输入课程名称', trigger: 'blur' }
+  ],
+  teacherName: [
+    { required: true, message: '请输入任课教师', trigger: 'blur' }
+  ]
+}
+
+// 加载课程列表
+const loadCourses = async () => {
+  loading.value = true
+  try {
+    const res = await getCourses({
+      keyword: searchKeyword.value
+    })
+    console.log('课程列表响应:', res)
+    console.log('课程数据:', res.data)
+    
+    if (res && res.code === 200) {
+      courseList.value = res.data || []
+    } else {
+      ElMessage.error(res?.message || '获取课程列表失败')
     }
-
-    const handleEdit = (course) => {
-      // 实现编辑功能
+  } catch (error) {
+    console.error('加载课程列表错误:', error)
+    if (error.response) {
+      console.error('错误响应:', error.response)
+      ElMessage.error(error.response?.data?.message || '获取课程列表失败')
+    } else {
+      ElMessage.error('获取课程列表失败')
     }
+  } finally {
+    loading.value = false
+  }
+}
 
-    const handleDelete = async (id) => {
-      if (confirm('确定要删除这门课程吗？')) {
-        try {
-          // await deleteCourse(id)
-          await fetchCourses()
-        } catch (error) {
-          console.error('删除失败:', error)
-        }
-      }
+// 搜索
+const handleSearch = () => {
+  loadCourses()
+}
+
+// 添加课程
+const handleAdd = () => {
+  isEdit.value = false
+  dialogTitle.value = '添加课程'
+  courseForm.value = {
+    courseId: '',
+    courseName: '',
+    teacherName: ''
+  }
+  dialogVisible.value = true
+}
+
+// 编辑课程
+const handleEdit = (row) => {
+  isEdit.value = true
+  dialogTitle.value = '编辑课程'
+  courseForm.value = {
+    courseId: row.courseId,
+    courseName: row.courseName,
+    teacherName: row.teacherName
+  }
+  dialogVisible.value = true
+}
+
+// 删除课程
+const handleDelete = async (row) => {
+  try {
+    await ElMessageBox.confirm('确认删除该课程吗？', '确认', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+    
+    const res = await deleteCourse(row.courseId)
+    if (res.code === 200) {
+      ElMessage.success('删除成功')
+      loadCourses()
+    } else {
+      ElMessage.error(res?.message || '删除失败')
     }
-
-    onMounted(fetchCourses)
-
-    return {
-      searchQuery,
-      currentPage,
-      totalPages,
-      courses,
-      showAddDialog,
-      handleEdit,
-      handleDelete
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('删除课程错误:', error)
+      ElMessage.error('删除失败')
     }
   }
 }
+
+// 提交表单
+const handleSubmit = async () => {
+  if (!formRef.value) return
+  
+  try {
+    await formRef.value.validate()
+    submitting.value = true
+    
+    let res
+    if (isEdit.value) {
+      const data = {
+        courseName: courseForm.value.courseName,
+        teacherName: courseForm.value.teacherName
+      }
+      res = await updateCourse(courseForm.value.courseId, data)
+    } else {
+      const data = {
+        courseId: courseForm.value.courseId,
+        courseName: courseForm.value.courseName,
+        teacherName: courseForm.value.teacherName
+      }
+      res = await addCourse(data)
+    }
+
+    if (res.code === 200) {
+      ElMessage.success(isEdit.value ? '更新成功' : '添加成功')
+      dialogVisible.value = false
+      loadCourses()
+    } else {
+      ElMessage.error(res?.message || (isEdit.value ? '更新失败' : '添加失败'))
+    }
+  } catch (error) {
+    console.error('提交表单错误:', error)
+    if (error.response?.data?.message) {
+      ElMessage.error(error.response.data.message)
+    } else {
+      ElMessage.error(isEdit.value ? '更新失败' : '添加失败')
+    }
+  } finally {
+    submitting.value = false
+  }
+}
+
+onMounted(() => {
+  loadCourses()
+})
 </script>
 
 <style scoped>
-/* 复用 Students.vue 的样式 */
-.courses-manage {
-  height: 100%;
+.course-manage {
+  padding: 20px;
 }
 
-.action-bar {
+.header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
-  gap: 20px;
-}
-
-.search-box {
-  display: flex;
-  flex: 1;
-  max-width: 400px;
-}
-
-.search-box input {
-  flex: 1;
-  padding: 8px 16px;
-  border: 2px solid rgba(24, 144, 255, 0.2);
-  border-radius: 8px 0 0 8px;
-  font-size: 14px;
-  transition: all 0.3s;
-}
-
-.search-box input:focus {
-  border-color: #1890ff;
-  outline: none;
-}
-
-.search-btn {
-  padding: 8px 16px;
-  background: #1890ff;
-  border: none;
-  border-radius: 0 8px 8px 0;
-  color: white;
-  cursor: pointer;
-}
-
-.add-btn {
-  padding: 8px 20px;
-  background: linear-gradient(45deg, #1890ff, #36cfc9);
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.add-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
-}
-
-.table-container {
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.data-table th,
-.data-table td {
-  padding: 12px 16px;
-  text-align: left;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.data-table th {
-  background: #fafafa;
-  font-weight: 600;
-  color: #666;
-}
-
-.data-table tr:hover {
-  background: #fafafa;
-}
-
-.actions {
-  display: flex;
-  gap: 8px;
-}
-
-.edit-btn,
-.delete-btn {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.edit-btn {
-  background: #1890ff;
-  color: white;
-}
-
-.delete-btn {
-  background: #ff4d4f;
-  color: white;
-}
-
-.edit-btn:hover,
-.delete-btn:hover {
-  opacity: 0.8;
-  transform: translateY(-1px);
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-  gap: 16px;
-}
-
-.pagination button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  background: #1890ff;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.pagination button:disabled {
-  background: #d9d9d9;
-  cursor: not-allowed;
-}
-
-.pagination button:not(:disabled):hover {
-  background: #40a9ff;
 }
 </style>   

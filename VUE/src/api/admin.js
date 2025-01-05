@@ -1,18 +1,6 @@
 import request from '@/utils/request'
 
-// 获取学生列表
-export function getStudents(params) {
-  // 如果没有关键字，就不传这个参数
-  const queryParams = params.keyword ? { keyword: params.keyword } : {}
-  
-  return request({
-    url: '/api/admin/students',
-    method: 'get',
-    params: queryParams
-  })
-}
-
-// 获取所有用户
+// 用户管理相关 API
 export function getUsers() {
   return request({
     url: '/api/admin/users',
@@ -20,38 +8,65 @@ export function getUsers() {
   })
 }
 
-// 删除用户
-export function deleteUser(username) {
+export function getStudents(params) {
   return request({
-    url: `/api/admin/users/${username}`,
-    method: 'delete'
-  });
-}
-
-// 添加学生（创建用户）
-export function addStudent(data) {
-  return request({
-    url: '/api/admin/users',
-    method: 'post',
-    data: {
-      username: data.username,
-      password: data.password,  // 确保包含密码字段
-      name: data.name,
-      phone: data.phone,
-      role: 'student'
-    }
+    url: '/api/admin/students',
+    method: 'get',
+    params
   })
 }
 
-// 更新用户信息
+export function addUser(data) {
+  return request({
+    url: '/api/admin/users',
+    method: 'post',
+    data
+  })
+}
+
 export function updateUser(username, data) {
   return request({
     url: `/api/admin/users/${username}`,
     method: 'put',
-    data: {
-      username: username,  // 添加 username 字段
-      name: data.name,
-      phone: data.phone
-    }
-  });
+    data
+  })
+}
+
+export function deleteUser(username) {
+  return request({
+    url: `/api/admin/users/${username}`,
+    method: 'delete'
+  })
+}
+
+// 课程管理相关 API
+export function getCourses(params) {
+  return request({
+    url: '/api/admin/courses',
+    method: 'get',
+    params
+  })
+}
+
+export function addCourse(data) {
+  return request({
+    url: '/api/admin/courses',
+    method: 'post',
+    data
+  })
+}
+
+export function updateCourse(courseId, data) {
+  return request({
+    url: `/api/admin/courses/${courseId}`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteCourse(courseId) {
+  return request({
+    url: `/api/admin/courses/${courseId}`,
+    method: 'delete'
+  })
 } 
