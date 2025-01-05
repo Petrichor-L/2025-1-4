@@ -1,20 +1,19 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 
-// 创建axios实例
 const service = axios.create({
-  baseURL: 'http://localhost:8081', // 修改为后端服务器地址
-  timeout: 5000    // 请求超时时间
+  baseURL: 'http://localhost:8081',
+  timeout: 5000
 })
 
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    // 可以在这里添加token等认证信息
+    console.log('发送请求:', config.url)  // 添加日志
     return config
   },
   error => {
-    console.log(error)
+    console.error('请求错误:', error)
     return Promise.reject(error)
   }
 )
@@ -30,7 +29,7 @@ service.interceptors.response.use(
     return res
   },
   error => {
-    console.log('err' + error)
+    console.error('响应错误:', error)
     ElMessage.error(error.message || '请求失败')
     return Promise.reject(error)
   }

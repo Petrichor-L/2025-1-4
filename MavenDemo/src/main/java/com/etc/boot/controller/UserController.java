@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 @Slf4j
 @CrossOrigin
 public class UserController {
@@ -23,24 +23,13 @@ public class UserController {
      * 用户登录
      */
     @PostMapping("/login")
-    public Result<User> login(@RequestBody LoginDTO loginDTO) {
-        log.info("收到登录请求：{}", loginDTO);
-        try {
-            if (StringUtils.isEmpty(loginDTO.getUsername()) || 
-                StringUtils.isEmpty(loginDTO.getPassword())) {
-                return Result.error("用户名或密码不能为空");
-            }
-            
-            User user = userService.login(loginDTO.getUsername(), loginDTO.getPassword());
-            if (user != null) {
-                return Result.success(user);
-            }
-            return Result.error("用户名或密码错误");
-            
-        } catch (Exception e) {
-            log.error("登录失败：", e);
-            return Result.error("登录失败：" + e.getMessage());
+    public Result<User> login(@RequestBody User user) {
+        log.info("用户登录：{}", user.getUsername());
+        User dbUser = userService.login(user.getUsername(), user.getPassword());
+        if (dbUser != null) {
+            return Result.success(dbUser);
         }
+        return Result.error("用户名或密码错误");
     }
     
     /**
