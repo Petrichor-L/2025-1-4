@@ -1,6 +1,7 @@
 package com.etc.boot.mapper;
 
 import com.etc.boot.Pojo.GetGrade;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -22,4 +23,8 @@ public interface IGradeMapper {
             "JOIN grade g ON u.id = g.studentId " +
             "JOIN course c ON g.courseId = c.courseId ")
     List<GetGrade> getGradeAll();
+
+    // 添加学生成绩
+    @Insert("INSERT INTO `grade`.`grade` (`studentId`, `courseId`, `grade`) VALUES (#{studentId}, #{courseId}, #{grade})")
+    int addGrade(int studentId, int courseId, int grade);
 }

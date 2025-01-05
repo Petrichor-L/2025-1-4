@@ -8,4 +8,6 @@ public interface IGradeService {
     public List<GetGrade> getGradeAll();
 
     public List<GetGrade> getGradeStu(int studentId);
+
+    public int addGrade(int studentId, int courseId, int grade);
 }

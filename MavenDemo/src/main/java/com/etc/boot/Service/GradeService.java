@@ -21,4 +21,9 @@ public class GradeService implements IGradeService {
     public List<GetGrade> getGradeStu(int studentId) {
         return iGradeMapper.getGradeStu(studentId);
     }
+
+    @Override
+    public int addGrade(int studentId, int courseId, int grade) {
+        return iGradeMapper.addGrade(studentId, courseId, grade);
+    }
 }

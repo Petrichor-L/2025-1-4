@@ -23,4 +23,9 @@ public class GradeController {
     public List<GetGrade> getGradestu(int studentId) {
         return iGradeService.getGradeStu(studentId);
     }
+
+    @RequestMapping("Add")
+    public int addGrade(int studentId, int courseId, int grade) {
+        return iGradeService.addGrade(studentId, courseId, grade);
+    }
 }
