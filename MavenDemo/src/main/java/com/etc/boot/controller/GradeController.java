@@ -117,7 +117,7 @@ public class GradeController {
     }
 
     @PutMapping
-    public Result updateGrade(@RequestBody Grade grade) {
+    public Result<String> updateGrade(@RequestBody Grade grade) {
         try {
             int result = gradeService.updateGrade(
                 grade.getStudentId(), 
