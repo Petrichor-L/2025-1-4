@@ -53,4 +53,7 @@ public interface UserMapper {
     
     @Delete("DELETE FROM users WHERE username = #{username}")
     int deleteByUsername(@Param("username") String username);
+    
+    @Select("SELECT * FROM users WHERE username = #{username}")
+    User selectByUsername(@Param("username") String username);
 } 

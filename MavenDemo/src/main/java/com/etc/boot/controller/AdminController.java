@@ -26,12 +26,6 @@ public class AdminController {
         return Result.success(adminService.getAllUsers());
     }
     
-    @DeleteMapping("/users/{id}")
-    public Result<Void> deleteUser(@PathVariable Integer id) {
-        adminService.deleteUser(id);
-        return Result.success(null);
-    }
-    
     // 课程管理
     @GetMapping("/courses")
     public Result<List<Course>> listCourses() {
@@ -80,6 +74,13 @@ public class AdminController {
             if (adminService.checkUsernameExist(user.getUsername())) {
                 return Result.error("用户名已存在");
             }
+            
+            // 如果没有设置密码，使用默认密码
+            if (StringUtils.isEmpty(user.getPassword())) {
+                user.setPassword("123456"); // 默认密码
+                log.info("用户未设置密码，使用默认密码");
+            }
+            
             return Result.success(adminService.addUser(user));
         } catch (Exception e) {
             log.error("添加用户失败", e);
@@ -107,6 +108,15 @@ public class AdminController {
     public Result<Void> deleteUser(@PathVariable String username) {
         log.info("删除用户：{}", username);
         try {
+            // 检查要删除的用户是否为学生
+            User user = adminService.getUserByUsername(username);
+            if (user == null) {
+                return Result.error("用户不存在");
+            }
+            if (!"student".equals(user.getRole())) {
+                return Result.error("只能删除学生账户");
+            }
+            
             adminService.deleteUserByUsername(username);
             return Result.success(null);
         } catch (Exception e) {

@@ -22,4 +22,5 @@ public interface AdminService {
     User addUser(User user);
     User updateUser(User user);
     void deleteUserByUsername(String username);
+    User getUserByUsername(String username);
 } 

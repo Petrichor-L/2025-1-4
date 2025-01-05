@@ -1,0 +1,3 @@
+<select id="selectByUsername" resultType="com.etc.boot.Pojo.User">
+    SELECT * FROM users WHERE username = #{username}
+</select> 

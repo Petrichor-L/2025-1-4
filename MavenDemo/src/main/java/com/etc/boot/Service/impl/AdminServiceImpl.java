@@ -75,10 +75,6 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public User addUser(User user) {
-        // 设置默认密码为123456
-        if (StringUtils.isEmpty(user.getPassword())) {
-            user.setPassword("123456");
-        }
         userMapper.insert(user);
         return user;
     }
@@ -101,5 +97,11 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     public void deleteUserByUsername(String username) {
         userMapper.deleteByUsername(username);
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        // 通过用户名查询用户
+        return userMapper.selectByUsername(username);
     }
 } 
