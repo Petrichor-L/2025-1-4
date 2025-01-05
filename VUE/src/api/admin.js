@@ -33,7 +33,13 @@ export function addStudent(data) {
   return request({
     url: '/api/admin/users',
     method: 'post',
-    data
+    data: {
+      username: data.username,
+      password: data.password,  // 确保包含密码字段
+      name: data.name,
+      phone: data.phone,
+      role: 'student'
+    }
   })
 }
 

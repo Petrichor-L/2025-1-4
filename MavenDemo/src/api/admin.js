@@ -23,4 +23,12 @@ export function getStudents(params) {
     method: 'get',
     params
   })
+}
+
+// 修改前端删除用户的API调用
+export function deleteUser(username) {
+  return request({
+    url: `/api/admin/users/${username}`,
+    method: 'delete'
+  })
 } 

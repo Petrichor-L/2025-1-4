@@ -42,6 +42,24 @@ import { Search } from '@element-plus/icons-vue'
 const searchKeyword = ref('')
 const studentList = ref([])
 
+const form = ref({
+  username: '',
+  name: '',
+  phone: '',
+  password: '',
+  role: 'student'
+})
+
+const resetForm = () => {
+  form.value = {
+    username: '',
+    name: '',
+    phone: '',
+    password: '',
+    role: 'student'
+  }
+}
+
 const loadStudents = async () => {
   try {
     const res = await getStudents({ keyword: searchKeyword.value })
@@ -63,7 +81,7 @@ const handleSearch = () => {
 const handleDelete = async (row) => {
   try {
     await ElMessageBox.confirm('确定要删除该学生吗？')
-    await deleteUser(row.id)
+    await deleteUser(row.username)
     ElMessage.success('删除成功')
     loadStudents()
   } catch (error) {
