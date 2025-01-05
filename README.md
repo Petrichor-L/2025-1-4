@@ -12,3 +12,23 @@
   - pnpm install
   - pnpm dev
 5. 在浏览器输入 http://localhost:5173/ 即可访问
+
+
+# Student Grade Management System
+Implemented primarily using Vue3 + SpringBoot
+
+# How to Run:
+1. In the `2025-1-4\MavenDemo\src\main\resources\application.properties` file, modify the following three lines to enable the Java program to connect to the local database (remember to delete the book symbols 《》 as well):
+   - `spring.datasource.url=jdbc:mysql://localhost:3306/《Database Name》?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false`
+   - `spring.datasource.username=《Database Username》`
+   - `spring.datasource.password=《Database Password》`
+
+2. Run the MySQL database and execute the `2025-1-4\grade.sql` file from the repository to create tables, including test data. The account and password are in the `user` table, and the database name is `grade`.
+
+3. Run `2025-1-4\MavenDemo\src\main\java\com\etc\boot\Application.java`.
+
+4. In the `2025-1-4\VUE\` folder, open a terminal and enter the following commands in sequence:
+   - `pnpm install`
+   - `pnpm dev`
+
+5. Enter `http://localhost:5173/` in the browser to access the system.
