@@ -28,4 +28,9 @@ public class GradeController {
     public int addGrade(int studentId, int courseId, int grade) {
         return iGradeService.addGrade(studentId, courseId, grade);
     }
+
+    @RequestMapping("Update")
+    public int updateGrade(int studentId, int courseId, int grade) {
+        return iGradeService.updateGrade(studentId, courseId, grade);
+    }
 }

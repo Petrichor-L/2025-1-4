@@ -26,4 +26,9 @@ public class GradeService implements IGradeService {
     public int addGrade(int studentId, int courseId, int grade) {
         return iGradeMapper.addGrade(studentId, courseId, grade);
     }
+
+    @Override
+    public int updateGrade(int studentId, int courseId, int grade) {
+        return iGradeMapper.updateGrade(studentId, courseId, grade);
+    }
 }

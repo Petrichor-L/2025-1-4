@@ -4,6 +4,7 @@ import com.etc.boot.Pojo.GetGrade;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -27,4 +28,8 @@ public interface IGradeMapper {
     // 添加学生成绩
     @Insert("INSERT INTO `grade`.`grade` (`studentId`, `courseId`, `grade`) VALUES (#{studentId}, #{courseId}, #{grade})")
     int addGrade(int studentId, int courseId, int grade);
+
+    // 更新学生成绩
+    @Update("UPDATE `grade`.`grade` SET `grade` = #{grade} WHERE `studentId` = #{studentId} AND `courseId` = #{courseId}")
+    int updateGrade(int studentId, int courseId, int grade);
 }
