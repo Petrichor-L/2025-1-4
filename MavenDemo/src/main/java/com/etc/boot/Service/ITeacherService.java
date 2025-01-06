@@ -1,6 +1,8 @@
 package com.etc.boot.Service;
 
+import com.etc.boot.Pojo.Course;
 import com.etc.boot.Pojo.GetGrade;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -12,4 +14,10 @@ public interface ITeacherService {
     int linkStuCourse(String studentId, int courseId);
 
     int upGrade(String studentId, int courseId, int grade);
+
+    List<Course> findTeacherCourses(String teacherId);
+
+//    List<Course> searchCourses(String keyword);
+//
+//    List<Course> getAllCourses();
 }

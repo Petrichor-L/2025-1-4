@@ -1,6 +1,8 @@
 package com.etc.boot.Service;
 
+import com.etc.boot.Pojo.Course;
 import com.etc.boot.Pojo.GetGrade;
+import com.etc.boot.mapper.CourseMapper;
 import com.etc.boot.mapper.IGradeMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import java.util.List;
 public class TeacherService implements ITeacherService {
     @Autowired
     private IGradeMapper iGradeMapper;
+    @Autowired
+    private CourseMapper courseMapper;
 
 
     @Override
@@ -35,4 +39,19 @@ public class TeacherService implements ITeacherService {
     public int upGrade(String studentId, int courseId, int grade) {
         return iGradeMapper.updateGrade(studentId, courseId, grade);
     }
+
+    @Override
+    public List<Course> findTeacherCourses(String teacherId) {
+        return courseMapper.findTeacherCourses(teacherId);
+    }
+
+//    @Override
+//    public List<Course> searchCourses(String keyword) {
+//        return courseMapper.searchCourses(keyword);
+//    }
+//
+//    @Override
+//    public List<Course> getAllCourses() {
+//        return null;
+//    }
 }
