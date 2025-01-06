@@ -1,12 +1,15 @@
 package com.etc.boot.controller;
 
+import com.etc.boot.Pojo.Course;
 import com.etc.boot.Pojo.GetGrade;
 import com.etc.boot.Service.ITeacherService;
 import com.etc.boot.Service.TeacherService;
+import com.etc.boot.common.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,7 +38,7 @@ public class TeacherController {
         return iTeacherService.addGrade(studentId, courseId, grade);
     }
 
-    // 更新成绩(未完成)
+    // 更新成绩
     @GetMapping("/upGrade")
     public int upGrade(String studentId, int courseId, int grade) {
         return iTeacherService.upGrade(studentId, courseId, grade);
@@ -48,6 +51,11 @@ public class TeacherController {
         return iTeacherService.linkStuCourse(studentId, courseId);
     }
 
+    @GetMapping("/Courses")
+    public List<Course> findTeacherCourses(String teacherId) {
+        return iTeacherService.findTeacherCourses(teacherId);
+    }
+
     // 待修改
 //    @GetMapping("/courses")
 //    public Result<List<Course>> listCourses(@RequestParam(required = false) String keyword) {
@@ -55,9 +63,9 @@ public class TeacherController {
 //        try {
 //            List<Course> courses;
 //            if (StringUtils.hasText(keyword)) {
-//                courses = adminService.searchCourses(keyword);
+//                courses = iTeacherService.searchCourses(keyword);
 //            } else {
-//                courses = adminService.getAllCourses();
+//                courses = iTeacherService.getAllCourses();
 //            }
 //            return Result.success(courses);
 //        } catch (Exception e) {
