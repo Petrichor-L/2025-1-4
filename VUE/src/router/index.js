@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Register from '../views/register.vue'
 
 const routes = [
     {
@@ -14,7 +13,7 @@ const routes = [
     {
         path: '/register',
         name: 'register',
-        component: Register
+        component: () => import('@/views/register.vue')
     },
     // 学生路由
     {

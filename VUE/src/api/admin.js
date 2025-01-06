@@ -106,6 +106,6 @@ export function searchGrades(keyword) {
   return request({
     url: '/api/grades',
     method: 'get',
-    params: { keyword }  // 可以搜索学号、课程编号、课程名称
+    params: { keyword }  // 可以搜索学号、课程编号
   })
 } 

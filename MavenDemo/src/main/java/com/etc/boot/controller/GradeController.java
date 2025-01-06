@@ -4,6 +4,7 @@ import com.etc.boot.Pojo.GetGrade;
 import com.etc.boot.Pojo.Grade;
 import com.etc.boot.Service.IGradeService;
 import com.etc.boot.common.Result;
+import com.etc.boot.Pojo.User;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/grades")
@@ -19,6 +22,9 @@ import java.util.List;
 public class GradeController {
     @Autowired
     private IGradeService gradeService;
+
+    @Autowired
+    private HttpServletRequest request;
 
     // 获取成绩列表（管理员可查看所有，教师只能查看自己课程的，学生只能查看自己的）
     @GetMapping
@@ -136,12 +142,18 @@ public class GradeController {
 
     // 添加这些方法来获取当前用户信息
     private String getCurrentUserRole() {
-        // TODO: 从 Session 或 Token 中获取
-        return "admin"; // 临时返回，需要实现真实的用户角色获取逻辑
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            throw new RuntimeException("请先登录");
+        }
+        return user.getRole();
     }
     
     private String getCurrentUserId() {
-        // TODO: 从 Session 或 Token 中获取
-        return "1"; // 临时返回，需要实现真实的用户ID获取逻辑
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            throw new RuntimeException("请先登录");
+        }
+        return user.getUsername();
     }
 }
