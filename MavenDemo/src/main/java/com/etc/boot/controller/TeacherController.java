@@ -3,13 +3,8 @@ package com.etc.boot.controller;
 import com.etc.boot.Pojo.Course;
 import com.etc.boot.Pojo.GetGrade;
 import com.etc.boot.Service.ITeacherService;
-import com.etc.boot.Service.TeacherService;
-import com.etc.boot.common.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +17,6 @@ public class TeacherController {
 
     @Autowired
     private ITeacherService iTeacherService;
-    private static final Logger logger = LoggerFactory.getLogger(TeacherService.class);
 
     // 成绩管理
     // 获取所有成绩

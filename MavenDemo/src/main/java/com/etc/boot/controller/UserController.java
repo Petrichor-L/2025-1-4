@@ -2,7 +2,6 @@ package com.etc.boot.controller;
 
 import com.etc.boot.Service.UserService;
 import com.etc.boot.common.Result;
-import com.etc.boot.dto.LoginDTO;
 import com.etc.boot.dto.RegisterDTO;
 import com.etc.boot.Pojo.User;
 import lombok.extern.slf4j.Slf4j;

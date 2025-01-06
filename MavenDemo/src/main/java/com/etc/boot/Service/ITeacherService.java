@@ -2,8 +2,6 @@ package com.etc.boot.Service;
 
 import com.etc.boot.Pojo.Course;
 import com.etc.boot.Pojo.GetGrade;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
 
 public interface ITeacherService {

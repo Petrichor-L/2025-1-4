@@ -1,7 +1,6 @@
 package com.etc.boot.mapper;
 
 import com.etc.boot.Pojo.GetStudent;
-import com.etc.boot.Pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 

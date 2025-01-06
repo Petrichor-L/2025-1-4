@@ -9,11 +9,29 @@ export function getTeacherGrades(teacherId) {
   })
 }
 
+// 根据学号或学生姓名查询成绩
+export function searchGrades(keyword, teacherId) {
+  return request({
+    url: '/api/teacher/searchGrades',
+    method: 'get',
+    params: { keyword, teacherId }
+  })
+}
+
+// 获取教师的课程
+export function getTeacherCourses(teacherId) {
+  return request({
+    url: '/api/teacher/courses',
+    method: 'get',
+    params: { teacherId }
+  })
+}
+
 // 添加成绩
 export function addGrade(studentId, courseId, grade) {
   return request({
     url: '/api/teacher/addGrade',
-    method: 'get',  // 后端用的是 GetMapping
+    method: 'get',
     params: {
       studentId,
       courseId,
@@ -26,7 +44,7 @@ export function addGrade(studentId, courseId, grade) {
 export function updateGrade(studentId, courseId, grade) {
   return request({
     url: '/api/teacher/upGrade',
-    method: 'get',  // 后端用的是 GetMapping
+    method: 'get',
     params: {
       studentId,
       courseId,

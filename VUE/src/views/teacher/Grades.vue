@@ -117,8 +117,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { getTeacherGrades, addGrade, updateGrade } from '@/api/teacher'
+import { ElMessage } from 'element-plus'
+import { getTeacherGrades, searchGrades, addGrade, updateGrade } from '@/api/teacher'
 
 const searchKeyword = ref('')
 const gradeList = ref([])
@@ -190,7 +190,7 @@ const loadGrades = async () => {
   try {
     const user = JSON.parse(localStorage.getItem('user'))
     const res = await getTeacherGrades(user.username)
-    if (res && Array.isArray(res)) {  // 后端直接返回数组
+    if (res && Array.isArray(res)) {
       gradeList.value = res
     } else {
       throw new Error('获取成绩列表失败')
@@ -204,8 +204,27 @@ const loadGrades = async () => {
 }
 
 // 搜索处理
-const handleSearch = () => {
-  loadGrades()
+const handleSearch = async () => {
+  loading.value = true
+  try {
+    const user = JSON.parse(localStorage.getItem('user'))
+    if (!searchKeyword.value) {
+      // 如果没有输入关键词，加载所有成绩
+      await loadGrades()
+    } else {
+      const res = await searchGrades(searchKeyword.value, user.username)
+      if (res && Array.isArray(res)) {
+        gradeList.value = res
+      } else {
+        throw new Error('查询失败')
+      }
+    }
+  } catch (error) {
+    console.error('搜索成绩错误:', error)
+    ElMessage.error('查询失败')
+  } finally {
+    loading.value = false
+  }
 }
 
 // 添加成绩
@@ -244,14 +263,13 @@ const handleSubmit = async () => {
     const res = await apiMethod(
       gradeForm.value.studentId,
       gradeForm.value.courseId,
-      Number(gradeForm.value.grade)  // 确保成绩是数字类型
+      Number(gradeForm.value.grade)
     )
 
-    // 后端返回的是数字（影响的行数），不是标准的 response 格式
-    if (res > 0) {  // 如果影响行数大于0，说明操作成功
+    if (res > 0) {
       ElMessage.success(isEdit.value ? '修改成功' : '添加成功')
       dialogVisible.value = false
-      loadGrades()  // 重新加载成绩列表
+      loadGrades()
     } else {
       throw new Error(isEdit.value ? '修改失败' : '添加失败')
     }
@@ -329,7 +347,6 @@ onMounted(() => {
   font-size: 28px;
   font-weight: bold;
   text-align: center;
-  padding: 10px 0;
 }
 
 .grade-excellent {
