@@ -9,5 +9,7 @@ public interface ITeacherService {
 
     int addGrade(String studentId, int courseId, int grade);
 
-    boolean linkStuCourse(String studentId, int courseId);
+    int linkStuCourse(String studentId, int courseId);
+
+    int upGrade(String studentId, int courseId, int grade);
 }

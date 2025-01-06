@@ -35,10 +35,16 @@ public class TeacherController {
         return iTeacherService.addGrade(studentId, courseId, grade);
     }
 
+    // 更新成绩(未完成)
+    @GetMapping("/upGrade")
+    public int upGrade(String studentId, int courseId, int grade) {
+        return iTeacherService.upGrade(studentId, courseId, grade);
+    }
+
     // 课程管理
     // 课程添加学生
     @GetMapping("/linkStu")
-    public boolean linkStuCourse(String studentId, int courseId) {
+    public int linkStuCourse(String studentId, int courseId) {
         return iTeacherService.linkStuCourse(studentId, courseId);
     }
 

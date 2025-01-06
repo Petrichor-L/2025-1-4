@@ -86,5 +86,5 @@ public interface IGradeMapper {
 
     // 给课程添加学生
     @Insert("INSERT INTO grade (studentId, courseId) VALUES (#{studentId}, #{courseId})")
-    boolean linkStuCourse(String studentId, int courseId);
+    int linkStuCourse(String studentId, int courseId);
 }

@@ -27,7 +27,12 @@ public class TeacherService implements ITeacherService {
     }
 
     @Override
-    public boolean linkStuCourse(String studentId, int courseId) {
+    public int linkStuCourse(String studentId, int courseId) {
         return iGradeMapper.linkStuCourse(studentId, courseId);
+    }
+
+    @Override
+    public int upGrade(String studentId, int courseId, int grade) {
+        return iGradeMapper.updateGrade(studentId, courseId, grade);
     }
 }
