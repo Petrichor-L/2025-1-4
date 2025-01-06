@@ -84,14 +84,14 @@ public interface IGradeMapper {
     List<GetGrade> searchStudentGrades(@Param("studentId") String studentId,
                                        @Param("keyword") String keyword);
 
-    // 通过学号和姓名（未完成）查询成绩（当前老师）
-    @Select("SELECT g.studentId AS studentId, g.courseId AS courseId, g.grade AS grade,\n" +
-            "       COALESCE(u.name, u.username) AS studentName, c.course_name AS courseName\n" +
+    // 通过学号和姓名查询成绩（当前老师）
+    @Select("SELECT u.username AS studentId, g.courseId AS courseId, g.grade AS grade,\n" +
+            "       u.name AS studentName, c.course_name AS courseName\n" +
             "FROM grade g\n" +
             "LEFT JOIN users u ON g.studentId = u.username\n" +
             "LEFT JOIN course c ON g.courseId = c.course_id\n" +
             "WHERE c.teacher_id = #{teacherId}\n" +
-            "  AND (g.studentId = #{keyword} OR u.name LIKE CONCAT('%', #{keyword}, '%'));")
+            "  AND (g.studentId = #{keyword} OR u.name = #{keyword});")
     List<GetGrade> searchStudentGradesForTeacher(String keyword, String teacherId);
 
     // 给课程添加学生
