@@ -17,6 +17,8 @@ public interface ITeacherService {
 
     List<Course> findTeacherCourses(String teacherId);
 
+    List<GetGrade> searchStudentGradesForTeacher(String keyword, String teacherId);
+
 //    List<Course> searchCourses(String keyword);
 //
 //    List<Course> getAllCourses();

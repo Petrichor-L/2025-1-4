@@ -45,6 +45,11 @@ public class TeacherService implements ITeacherService {
         return courseMapper.findTeacherCourses(teacherId);
     }
 
+    @Override
+    public List<GetGrade> searchStudentGradesForTeacher(String keyword, String teacherId) {
+        return iGradeMapper.searchStudentGradesForTeacher(keyword, teacherId);
+    }
+
 //    @Override
 //    public List<Course> searchCourses(String keyword) {
 //        return courseMapper.searchCourses(keyword);

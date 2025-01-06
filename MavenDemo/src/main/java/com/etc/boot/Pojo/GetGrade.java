@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetGrade {
-    private String studentId;    // 改为 String
+    private String studentId;
     private Integer courseId;
     private Integer grade;
     private String studentName;
