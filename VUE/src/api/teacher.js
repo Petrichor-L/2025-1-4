@@ -62,5 +62,22 @@ export function addStudentToCourse(studentId, courseId) {
       studentId,
       courseId
     }
+
+
   })
+
+
+
+
+
+
+
 } 
+// src/api/teacher.js
+export async function fetchCourses(teacherId) {
+  const response = await fetch(`http://localhost:8081/api/teacher/Courses?teacherId=${teacherId}`);
+  if (!response.ok) {
+    throw new Error('网络响应不正常');
+  }
+  return await response.json();
+}

@@ -25,7 +25,7 @@
           </el-menu-item>
           <el-menu-item index="/teacher/courses">
             <el-icon><Reading /></el-icon>
-            <span>课程管理</span>
+            <span>我的课程</span>
           </el-menu-item>
         </el-menu>
       </div>
