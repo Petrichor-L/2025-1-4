@@ -64,4 +64,16 @@ public class UserServiceImpl implements UserService {
     public boolean checkUsernameExist(String username) {
         return userMapper.findByUsername(username) != null;
     }
+
+    @Override
+    public boolean updatePassword(String username, String oldPassword, String newPassword) {
+        // 先验证原密码是否正确
+        User user = userMapper.findByUsernameAndPassword(username, oldPassword);
+        if (user == null) {
+            return false;  // 原密码错误
+        }
+        
+        // 更新密码
+        return userMapper.updatePassword(username, newPassword) > 0;
+    }
 } 

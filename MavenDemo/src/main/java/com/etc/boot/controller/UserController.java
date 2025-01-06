@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
@@ -58,6 +59,19 @@ public class UserController {
         } catch (Exception e) {
             log.error("注册失败，错误：", e);
             return Result.error(e.getMessage());
+        }
+    }
+    
+    @PutMapping("/password")
+    public Result<String> updatePassword(@RequestBody Map<String, String> params) {
+        String username = params.get("username");
+        String oldPassword = params.get("oldPassword");
+        String newPassword = params.get("newPassword");
+        
+        if (userService.updatePassword(username, oldPassword, newPassword)) {
+            return Result.success("密码修改成功");
+        } else {
+            return Result.error("原密码错误");
         }
     }
 }

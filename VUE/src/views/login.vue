@@ -7,56 +7,160 @@
     </div>
     
     <div class="login-box">
-      <div class="login-title">用户登录</div>
+      <div class="login-title">{{ isChangingPassword ? '修改密码' : '用户登录' }}</div>
       <div class="login-form">
-        <div class="form-item">
-          <select v-model="loginForm.role">
-            <option value="">请选择角色</option>
-            <option value="student">学生</option>
-            <option value="teacher">教师</option>
-            <option value="admin">管理员</option>
-          </select>
-        </div>
-        
-        <div class="form-item">
-          <input type="text" v-model="loginForm.username" placeholder="请输入用户名">
-        </div>
-        
-        <div class="form-item">
-          <input type="password" v-model="loginForm.password" placeholder="请输入密码">
-        </div>
+        <!-- 登录表单 -->
+        <template v-if="!isChangingPassword">
+          <div class="form-item">
+            <select v-model="loginForm.role">
+              <option value="">请选择角色</option>
+              <option value="student">学生</option>
+              <option value="teacher">教师</option>
+              <option value="admin">管理员</option>
+            </select>
+          </div>
+          
+          <div class="form-item">
+            <input type="text" v-model="loginForm.username" placeholder="请输入用户名">
+          </div>
+          
+          <div class="form-item">
+            <input type="password" v-model="loginForm.password" placeholder="请输入密码">
+          </div>
 
-        <div v-if="errorMessage" class="error-message">
-          {{ errorMessage }}
-        </div>
+          <div v-if="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
 
-        <div class="form-item">
-          <button @click="handleLogin" :disabled="loading">
-            {{ loading ? '登录中...' : '登录' }}
-          </button>
-        </div>
+          <div class="form-item">
+            <button @click="handleLogin" :disabled="loading">
+              {{ loading ? '登录中...' : '登录' }}
+            </button>
+          </div>
 
-        <div class="register-link">
-          还没有账号？<router-link to="/register">立即注册</router-link>
-        </div>
+          <div class="form-links">
+            <router-link to="/register" class="register-link">立即注册</router-link>
+            <a href="javascript:;" @click="toggleChangePassword" class="change-password-link">修改密码</a>
+          </div>
+        </template>
+
+        <!-- 修改密码表单 -->
+        <template v-else>
+          <div class="form-item">
+            <input type="text" v-model="passwordForm.username" placeholder="请输入用户名">
+          </div>
+          
+          <div class="form-item">
+            <input type="password" v-model="passwordForm.oldPassword" placeholder="请输入原密码">
+          </div>
+
+          <div class="form-item">
+            <input type="password" v-model="passwordForm.newPassword" placeholder="请输入新密码">
+          </div>
+
+          <div class="form-item">
+            <input type="password" v-model="passwordForm.confirmPassword" placeholder="请确认新密码">
+          </div>
+
+          <div v-if="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+
+          <div class="form-item">
+            <button @click="handleUpdatePassword" :disabled="loading">
+              {{ loading ? '修改中...' : '确认修改' }}
+            </button>
+          </div>
+
+          <div class="form-links">
+            <a href="javascript:;" @click="toggleChangePassword" class="back-link">返回登录</a>
+          </div>
+        </template>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { login } from '@/api/auth'
+import { login, updatePassword } from '@/api/auth'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
+const loading = ref(false)
+const errorMessage = ref('')
+const isChangingPassword = ref(false)
+
+// 登录表单
 const loginForm = ref({
   role: '',
   username: '',
   password: ''
 })
-const loading = ref(false)
-const errorMessage = ref('')
+
+// 修改密码表单
+const passwordForm = ref({
+  username: '',
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
+
+// 切换修改密码模式
+const toggleChangePassword = () => {
+  isChangingPassword.value = !isChangingPassword.value
+  errorMessage.value = ''
+  passwordForm.value = {
+    username: '',
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  }
+}
+
+// 修改密码处理
+const handleUpdatePassword = async () => {
+  // 表单验证
+  if (!passwordForm.value.username || !passwordForm.value.oldPassword || 
+      !passwordForm.value.newPassword || !passwordForm.value.confirmPassword) {
+    errorMessage.value = '请填写完整信息'
+    return
+  }
+
+  if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
+    errorMessage.value = '两次输入的新密码不一致'
+    return
+  }
+
+  if (passwordForm.value.newPassword.length < 6) {
+    errorMessage.value = '新密码长度不能小于6位'
+    return
+  }
+
+  loading.value = true
+  errorMessage.value = ''
+  
+  try {
+    const res = await updatePassword({
+      username: passwordForm.value.username,
+      oldPassword: passwordForm.value.oldPassword,
+      newPassword: passwordForm.value.newPassword
+    })
+
+    if (res.code === 200) {
+      ElMessage.success('密码修改成功，请重新登录')
+      toggleChangePassword()
+    } else {
+      errorMessage.value = res.message || '修改失败'
+    }
+  } catch (error) {
+    console.error('修改密码错误:', error)
+    errorMessage.value = error.response?.data?.message || '修改失败，请稍后重试'
+  } finally {
+    loading.value = false
+  }
+}
 
 const handleLogin = async () => {
   // 表单验证
@@ -193,22 +297,25 @@ const handleLogin = async () => {
   animation: shake 0.5s ease-in-out;
 }
 
-.register-link {
-  text-align: center;
+.form-links {
+  display: flex;
+  justify-content: space-between;
   margin-top: 20px;
   font-size: 15px;
-  color: #666;
 }
 
-.register-link a {
+.register-link,
+.change-password-link,
+.back-link {
   color: #1890ff;
   text-decoration: none;
   font-weight: 500;
-  margin-left: 5px;
   transition: color 0.3s ease;
 }
 
-.register-link a:hover {
+.register-link:hover,
+.change-password-link:hover,
+.back-link:hover {
   color: #40a9ff;
   text-decoration: underline;
 }

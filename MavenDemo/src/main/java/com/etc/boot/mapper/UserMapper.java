@@ -59,4 +59,10 @@ public interface UserMapper {
     
     @Select("SELECT * FROM users WHERE name = #{name} AND role = 'teacher'")
     User findTeacherByName(@Param("name") String name);
+    
+    /**
+     * 更新用户密码
+     */
+    @Update("UPDATE users SET password = #{newPassword} WHERE username = #{username}")
+    int updatePassword(@Param("username") String username, @Param("newPassword") String newPassword);
 } 

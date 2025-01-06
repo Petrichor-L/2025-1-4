@@ -24,4 +24,13 @@ export const logout = () => {
   localStorage.removeItem('user')
   localStorage.removeItem('userRole')
   localStorage.removeItem('token')
+}
+
+// 修改密码
+export const updatePassword = (data) => {
+  return request({
+    url: '/api/user/password',
+    method: 'put',
+    data
+  })
 } 
