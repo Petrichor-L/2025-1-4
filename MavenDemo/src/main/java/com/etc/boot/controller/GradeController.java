@@ -30,36 +30,11 @@ public class GradeController {
     @GetMapping
     public Result<List<GetGrade>> getGrades(@RequestParam(required = false) String keyword) {
         try {
-            String role = getCurrentUserRole();
-            String userId = getCurrentUserId();
-            
             List<GetGrade> grades;
             if (StringUtils.hasText(keyword)) {
-                // 如果有搜索关键字，则进行搜索
-                if ("admin".equals(role)) {
-                    grades = gradeService.searchGrades(keyword);
-                } else if ("teacher".equals(role)) {
-                    grades = gradeService.getGradesByTeacher(userId);
-                } else if ("student".equals(role)) {
-                    grades = gradeService.getGradeStu(userId);
-                } else {
-                    return Result.error("无权限访问");
-                }
+                grades = gradeService.searchGrades(keyword);
             } else {
-                // 没有搜索关键字，返回所有记录
-                switch (role) {
-                    case "admin":
-                        grades = gradeService.getGradeAll();
-                        break;
-                    case "teacher":
-                        grades = gradeService.getGradesByTeacher(userId);
-                        break;
-                    case "student":
-                        grades = gradeService.getGradeStu(userId);
-                        break;
-                    default:
-                        return Result.error("无权限访问");
-                }
+                grades = gradeService.getGradeAll();
             }
             return Result.success(grades);
         } catch (Exception e) {
