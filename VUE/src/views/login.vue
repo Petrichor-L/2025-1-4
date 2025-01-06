@@ -7,25 +7,43 @@
     </div>
     
     <div class="login-box">
+      <div class="system-title">学生成绩管理系统</div>
       <div class="login-title">{{ isChangingPassword ? '修改密码' : '用户登录' }}</div>
+      
       <div class="login-form">
         <!-- 登录表单 -->
         <template v-if="!isChangingPassword">
           <div class="form-item">
-            <select v-model="loginForm.role">
-              <option value="">请选择角色</option>
-              <option value="student">学生</option>
-              <option value="teacher">教师</option>
-              <option value="admin">管理员</option>
-            </select>
+            <div class="role-select">
+              <div 
+                v-for="role in roles" 
+                :key="role.value"
+                class="role-option"
+                :class="{ active: loginForm.role === role.value }"
+                @click="loginForm.role = role.value"
+              >
+                <el-icon><component :is="role.icon" /></el-icon>
+                <span>{{ role.label }}</span>
+              </div>
+            </div>
           </div>
           
           <div class="form-item">
-            <input type="text" v-model="loginForm.username" placeholder="请输入用户名">
+            <el-input
+              v-model="loginForm.username"
+              placeholder="请输入用户名/学号"
+              prefix-icon="User"
+            />
           </div>
           
           <div class="form-item">
-            <input type="password" v-model="loginForm.password" placeholder="请输入密码">
+            <el-input
+              v-model="loginForm.password"
+              type="password"
+              placeholder="请输入密码"
+              prefix-icon="Lock"
+              show-password
+            />
           </div>
 
           <div v-if="errorMessage" class="error-message">
@@ -33,9 +51,14 @@
           </div>
 
           <div class="form-item">
-            <button @click="handleLogin" :disabled="loading">
+            <el-button 
+              type="primary" 
+              :loading="loading" 
+              @click="handleLogin"
+              class="submit-btn"
+            >
               {{ loading ? '登录中...' : '登录' }}
-            </button>
+            </el-button>
           </div>
 
           <div class="form-links">
@@ -84,6 +107,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { User, Lock, School, Notebook, Management } from '@element-plus/icons-vue'
 import { login, updatePassword } from '@/api/auth'
 import { ElMessage } from 'element-plus'
 
@@ -106,6 +130,13 @@ const passwordForm = ref({
   newPassword: '',
   confirmPassword: ''
 })
+
+// 角色选项
+const roles = [
+  { label: '学生', value: 'student', icon: 'School' },
+  { label: '教师', value: 'teacher', icon: 'Notebook' },
+  { label: '管理员', value: 'admin', icon: 'Management' }
+]
 
 // 切换修改密码模式
 const toggleChangePassword = () => {
@@ -221,7 +252,7 @@ const handleLogin = async () => {
 }
 
 .login-box {
-  width: 380px;
+  width: 400px;
   padding: 30px;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 16px;
@@ -232,13 +263,65 @@ const handleLogin = async () => {
   animation: fadeIn 0.5s ease-out;
 }
 
-.login-title {
-  font-size: 32px;
+.system-title {
+  font-size: 28px;
   color: #1890ff;
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   font-weight: bold;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.login-title {
+  font-size: 20px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.role-select {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  background: #f5f7fa;
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.role-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.3s;
+  gap: 8px;
+}
+
+.role-option:hover {
+  background: #e8f4ff;
+}
+
+.role-option.active {
+  background: #1890ff;
+  color: white;
+}
+
+.role-option.active :deep(.el-icon) {
+  color: white;
+}
+
+.role-option :deep(.el-icon) {
+  font-size: 24px;
+  color: #909399;
+}
+
+.submit-btn {
+  width: 100%;
+  height: 45px;
+  font-size: 16px;
 }
 
 .form-item {
