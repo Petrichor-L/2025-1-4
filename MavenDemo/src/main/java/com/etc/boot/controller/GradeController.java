@@ -47,22 +47,6 @@ public class GradeController {
     @PostMapping
     public Result<Integer> saveGrade(@RequestBody Grade grade) {
         try {
-            String role = getCurrentUserRole();
-            String userId = getCurrentUserId();
-            
-            // 只有管理员和教师可以修改成绩
-            if (!("admin".equals(role) || "teacher".equals(role))) {
-                return Result.error("无权限操作");
-            }
-            
-            // 如果是教师，需要验证是否是该课程的授课教师
-            if ("teacher".equals(role)) {
-                boolean isTeacherOfCourse = gradeService.validateTeacherCourse(userId, grade.getCourseId());
-                if (!isTeacherOfCourse) {
-                    return Result.error("您不是该课程的授课教师");
-                }
-            }
-            
             // 添加成绩
             boolean success = gradeService.addGrade(grade.getStudentId(), 
                                                   grade.getCourseId(), 
@@ -98,19 +82,15 @@ public class GradeController {
     }
 
     @PutMapping
-    public Result updateGrade(@RequestBody Grade grade) {
+    public Result<String> updateGrade(@RequestBody Grade grade) {
         try {
             int result = gradeService.updateGrade(
                 grade.getStudentId(), 
                 grade.getCourseId(), 
                 grade.getGrade()
             );
-            if (result > 0) {
-                return Result.success("成绩修改成功");
-            } else {
-                return Result.error("成绩修改失败");
-            }
-        } catch (RuntimeException e) {
+            return result > 0 ? Result.success("成绩修改成功") : Result.error("成绩修改失败");
+        } catch (Exception e) {
             return Result.error(e.getMessage());
         }
     }

@@ -1,73 +1,148 @@
 <template>
   <div class="dashboard-container">
-    <!-- 侧边栏导航 -->
-    <div class="sidebar">
-      <h2>教师系统</h2>
-      <nav>
-        <router-link to="/teacher/grades">学生成绩</router-link>
-        <router-link to="/teacher/courses">课程管理</router-link>
-        <router-link to="/teacher/grade-input">成绩录入</router-link>
-      </nav>
+    <!-- 顶部导航栏 -->
+    <div class="header">
+      <div class="logo">教师成绩管理系统</div>
+      <div class="user-info">
+        <span>{{ userInfo.username }}</span>
+        <el-button link @click="handleLogout">退出登录</el-button>
+      </div>
     </div>
-    
-    <!-- 主内容区域 -->
-    <div class="main-content">
-      <router-view></router-view>
+
+    <!-- 主要内容区域 -->
+    <div class="main-container">
+      <!-- 侧边栏 -->
+      <div class="sidebar">
+        <el-menu
+          :default-active="activeMenu"
+          router
+          class="menu"
+          background-color="#e9ecf2"
+        >
+          <el-menu-item index="/teacher/grades">
+            <el-icon><Document /></el-icon>
+            <span>成绩管理</span>
+          </el-menu-item>
+          <el-menu-item index="/teacher/courses">
+            <el-icon><Reading /></el-icon>
+            <span>课程管理</span>
+          </el-menu-item>
+        </el-menu>
+      </div>
+
+      <!-- 内容区域 -->
+      <div class="content">
+        <router-view></router-view>
+      </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'TeacherDashboard'
+<script setup>
+import { ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { Document, Reading } from '@element-plus/icons-vue'
+import { ElMessageBox } from 'element-plus'
+import { logout } from '@/api/auth'
+
+const router = useRouter()
+const route = useRoute()
+
+// 获取用户信息
+const userInfo = computed(() => {
+  const info = localStorage.getItem('user')
+  return info ? JSON.parse(info) : {}
+})
+
+// 当前激活的菜单项
+const activeMenu = computed(() => route.path)
+
+// 退出登录
+const handleLogout = () => {
+  ElMessageBox.confirm('确认退出登录吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    logout()
+    router.push('/login')
+  })
 }
 </script>
 
 <style scoped>
 .dashboard-container {
-  display: flex;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f0f2f5;
+}
+
+.header {
+  height: 60px;
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.main-container {
+  flex: 1;
+  display: flex;
+  margin: 20px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar {
   width: 200px;
-  background-color: #f5f5f5;
-  padding: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  background: #e9ecf2;
+  border-right: 1px solid #e6e6e6;
 }
 
-.sidebar h2 {
-  color: #333;
-  margin-bottom: 20px;
-  font-size: 1.5rem;
+.menu {
+  border-right: none;
 }
 
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.sidebar a {
-  text-decoration: none;
-  color: #333;
-  padding: 12px;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-}
-
-.sidebar a:hover {
-  background-color: #e0e0e0;
-}
-
-.sidebar a.router-link-active {
-  background-color: #667eea;
-  color: white;
-}
-
-.main-content {
+.content {
   flex: 1;
   padding: 20px;
-  background-color: #fff;
+  background: white;
+}
+
+:deep(.el-menu-item) {
+  color: #606266;
+}
+
+:deep(.el-menu-item:hover) {
+  background-color: #dde2eb !important;
+}
+
+:deep(.el-menu-item.is-active) {
+  background-color: #d0d7e3 !important;
+  color: #6b9ac4 !important;
+  font-weight: 500;
+}
+
+:deep(.el-menu-item .el-icon) {
+  color: #909399;
+}
+
+:deep(.el-menu-item.is-active .el-icon) {
+  color: #6b9ac4 !important;
 }
 </style> 
