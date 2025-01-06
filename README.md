@@ -16,11 +16,11 @@
 # 使用 JDK21 需要修改 `MavenDemo/pom.xml` 文件
 ```
 <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.36</version>   // 添加这一行
-      <optional>true</optional>
-    </dependency>
+  <groupId>org.projectlombok</groupId>
+  <artifactId>lombok</artifactId>
+  <version>1.18.36</version>   // 添加这一行
+  <optional>true</optional>
+</dependency>
 ```
 
 
@@ -46,9 +46,9 @@ Implemented primarily using Vue3 + SpringBoot
 # JDK21  `MavenDemo/pom.xml` file
 ```
 <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.36</version>   // add this line
-      <optional>true</optional>
-    </dependency>
+  <groupId>org.projectlombok</groupId>
+  <artifactId>lombok</artifactId>
+  <version>1.18.36</version>   // add this line
+  <optional>true</optional>
+</dependency>
 ```
