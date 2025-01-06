@@ -81,6 +81,10 @@ public interface IGradeMapper {
             "WHERE g.studentId = #{studentId} " +
             "AND (c.course_name LIKE CONCAT('%',#{keyword},'%') " +
             "OR c.course_id LIKE CONCAT('%',#{keyword},'%'))")
-    List<GetGrade> searchStudentGrades(@Param("studentId") String studentId, 
-                                      @Param("keyword") String keyword);
+    List<GetGrade> searchStudentGrades(@Param("studentId") String studentId,
+                                       @Param("keyword") String keyword);
+
+    // 给课程添加学生
+    @Insert("INSERT INTO grade (studentId, courseId) VALUES (#{studentId}, #{courseId})")
+    boolean linkStuCourse(String studentId, int courseId);
 }
