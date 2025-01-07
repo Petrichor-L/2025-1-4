@@ -1,114 +1,113 @@
 <template>
-  <div class="courses-container">
-    <h2>我的课程</h2>
-    <ul>
-      <li v-for="course in courses" :key="course.courseId" class="course-item">
-        <div class="course-details">
-          <h3 class="course-name">{{ course.courseName }}</h3>
-          <p class="class-time">{{ course.classTime }}</p>
-        </div>
-      </li>
-    </ul>
+  <div class="courses-view">
+    <h2 class="title">我的课程</h2>
+    <el-table 
+      :data="courseList" 
+      border
+      v-loading="loading"
+      empty-text="暂无数据"
+      class="courses-table"
+      style="width: 100%;"
+    >
+      <el-table-column prop="courseId" label="课程编号" width="150" />
+      <el-table-column prop="courseName" label="课程名称" width="200" />
+      <el-table-column prop="classroom" label="上课教室" width="150" />
+      <el-table-column prop="teacherId" label="教师ID" width="150" />
+      <el-table-column label="上课时间" width="300">
+        <template #default="scope">
+          {{ generateClassTime() }}
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
-<script>
-import { fetchCourses } from '@/api/teacher'; // 导入API
+<script setup>
+import { ref, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
+import { getTeacherCourses } from '@/api/teacher'
 
-export default {
-  name: 'TeacherCourses',
+const courseList = ref([])
+const loading = ref(false)
+
+// 随机生成上课时间
+const generateClassTime = () => {
+  const weekdays = ['一', '二', '三', '四', '五']
+  const sections = [
+    '1-2节',
+    '3-4节',
+    '5-6节',
+    '7-8节',
+    '9-10节'
+  ]
   
-  data() {
-    return {
-      courses: [] // 存储课程信息
-    };
-  },
+  const randomWeekday = weekdays[Math.floor(Math.random() * weekdays.length)]
+  const randomSection = sections[Math.floor(Math.random() * sections.length)]
   
-  mounted() {
-    this.loadCourses(); // 组件挂载后获取课程数据
-  },
-  
-  methods: {
-    async loadCourses() {
-      try {
-        const data = await fetchCourses('t1'); // 调用API
-        console.log('从后端收到的数据:', data);
-        
-        // 处理课程数据
-        this.courses = data.map(course => ({
-          courseId: course.courseId,
-          courseName: course.courseName,
-          classTime: this.generateRandomClassTime() // 生成随机上课时间
-        }));
-      } catch (error) {
-        console.error('获取课程失败:', error);
-      }
-    },
-    
-    generateRandomClassTime() {
-      const days = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期天'];
-      const period = Math.floor(Math.random() * 10) + 1; // 假设有10节课
-      const day = days[Math.floor(Math.random() * days.length)];
-      return `${day} 第${period}节`; // 格式化为“星期几第几节课”
+  return `星期${randomWeekday} 第${randomSection}`
+}
+
+// 加载课程列表
+const loadCourses = async () => {
+  loading.value = true
+  try {
+    const user = JSON.parse(localStorage.getItem('user'))
+    const res = await getTeacherCourses(user.username) // 使用教师的工号
+    console.log('课程列表返回:', res) // 打印返回值
+    if (res && Array.isArray(res)) {
+      courseList.value = res // 直接赋值
+    } else {
+      ElMessage.error(res?.message || '获取课程列表失败')
     }
+  } catch (error) {
+    console.error('加载课程列表错误:', error)
+    ElMessage.error('获取课程列表失败')
+  } finally {
+    loading.value = false
   }
 }
+
+onMounted(() => {
+  loadCourses()
+})
 </script>
 
 <style scoped>
-/* 相关样式 */
-.courses-container {
-  padding: 25px; /* 增加内边距 */
-  background-color: #e9f5ff; /* 更明亮的背景色 */
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  max-width: 500px; /* 增加最大宽度 */
-  margin: 20px auto; /* 上下留白，居中对齐 */
+.courses-view {
+  padding: 20px;
+  background-color: #f9f9f9; /* 背景颜色 */
+  border-radius: 8px; /* 圆角 */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+  max-width: 100%; /* 限制最大宽度为100% */
+  margin: 0; /* 去掉外边距 */
 }
 
-h2 {
-  color: #333;
-  text-align: center; /* 标题居中 */
-  margin-bottom: 20px; /* 标题下方间距 */
-  font-size: 24px; /* 增加标题字体大小 */
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333; /* 标题颜色 */
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
+.courses-table {
+  border-radius: 8px; /* 表格圆角 */
+  overflow: hidden; /* 避免内容溢出 */
 }
 
-.course-item {
-  padding: 10px; /* 内边距 */
-  border: 1px solid #007BFF; /* 使用蓝色边框 */
-  border-radius: 5px;
-  margin-bottom: 8px; /* 列表项之间的间距 */
-  background-color: #ffffff; /* 白色背景 */
-  transition: background-color 0.3s, transform 0.3s; /* 背景色和缩放过渡效果 */
-  display: flex; /* 使用flex布局 */
-  justify-content: space-between; /* 使内容两端对齐 */
+.courses-table .el-table__header {
+  background-color: #1890ff; /* 表头背景颜色 */
+  color: white; /* 表头文字颜色 */
 }
 
-.course-item:hover {
-  background-color: #f0f8ff; /* 悬停时的背景色 */
-  transform: scale(1.02); /* 悬停时轻微放大 */
+.courses-table .el-table__header th {
+  font-weight: bold; /* 表头加粗 */
 }
 
-.course-details {
-  display: flex;
-  justify-content: space-between; /* 使课程名称和上课时间两端对齐 */
-  width: 100%; /* 使内容占满整个宽度 */
+.courses-table .el-table__body tr:hover {
+  background-color: #f5f5f5; /* 鼠标悬停行的背景颜色 */
 }
 
-.course-name {
-  margin: 0; /* 去掉默认的外边距 */
-  color: #007BFF; /* 课程名称颜色 */
-  font-size: 18px; /* 增加课程名称字体大小 */
+.courses-table .el-table__body td {
+  padding: 15px; /* 单元格内边距 */
 }
-
-.class-time {
-  margin: 0; /* 去掉默认的外边距 */
-  color: #555; /* 上课时间颜色 */
-  text-align: right; /* 右对齐 */
-}
-</style> 
+</style>
