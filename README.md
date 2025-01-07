@@ -1,5 +1,6 @@
 # 学生成绩管理系统
 主要使用 Vue3 + SpringBoot 实现
+MySQL 5.7.26
 
 # 如何运行：
 1. 在 `2025-1-4\MavenDemo\src\main\resources\application.properties` 文件中修改下面三行，使 `java` 程序能够连接本地数据库（记得把书名号《》也删掉）
