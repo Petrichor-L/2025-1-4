@@ -3,7 +3,6 @@
     <h2 class="title">我的课程</h2>
     <el-table 
       :data="courseList" 
-      border
       v-loading="loading"
       empty-text="暂无数据"
       class="courses-table"

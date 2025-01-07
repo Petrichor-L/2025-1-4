@@ -16,7 +16,7 @@
           <div class="form-item">
             <div class="role-select">
               <div 
-                v-for="role in roles" 
+                v-for="(role, index) in roles" 
                 :key="role.value"
                 class="role-option"
                 :class="{ active: loginForm.role === role.value }"
@@ -25,6 +25,7 @@
                 <el-icon><component :is="role.icon" /></el-icon>
                 <span>{{ role.label }}</span>
               </div>
+              <div v-if="index === 0" class="divider"></div>
             </div>
           </div>
           
@@ -289,9 +290,6 @@ const handleLogin = async () => {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
-  background: #f5f7fa;
-  border-radius: 8px;
-  padding: 5px;
 }
 
 .role-option {
@@ -299,15 +297,15 @@ const handleLogin = async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px;
+  padding: 10px;
   cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.3s;
+  border-radius: 4px;
+  transition: background-color 0.3s;
   gap: 8px;
 }
 
 .role-option:hover {
-  background: #e8f4ff;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .role-option.active {
@@ -537,5 +535,11 @@ const handleLogin = async () => {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+
+.divider {
+  width: 1px;
+  background-color: rgba(0, 0, 0, 0.2);
+  margin: 0 5px;
 }
 </style>
